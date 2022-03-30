@@ -13,10 +13,10 @@ public class FortyNiner {
         endurance = 100;
         money = 100;
 
+        Pan pan = new Pan();
+        tools.add(pan);
         Sluice sluice = new Sluice();
         tools.add(sluice);
-        Cradle cradle = new Cradle();
-        tools.add(cradle);
 
         rnd = new Random();
         // System.out.println("FortyNiner");
