@@ -61,21 +61,23 @@ public class GoldRush {
     public void survive() {
         if(fortyNiner == null) {
             fortyNiner = new FortyNiner();
-            week = 0;
+            week = 1;
         }
+
+        System.out.println("Press Enter key to continue...");
+        try {
+            System.in.read();
+        } catch(Exception e) {}
+        System.out.print("\033\143");
+        
         while(week < 20){
-            System.out.println("Press Enter key to continue...");
-            try {
-                System.in.read();
-            } catch(Exception e) {}
-            System.out.print("\033\143");
 
             System.out.println("Week number " + week + " has arrived.");
-            fortyNiner.useTools();
-            fortyNiner.buyFood();
-            fortyNiner.loseEndurance();
-
-            week++;
+            System.out.println("Current money supply: $" + fortyNiner.getMoney());
+            System.out.println("Current endurance level: " + fortyNiner.getEndurance() + "%");
+            System.out.println("Current sluice durability level: " + fortyNiner.getTools().get(1).getDurability() + "%");
+            System.out.println("Current number of cradles: " + (fortyNiner.getTools().size() - 2));
+            System.out.println();
 
             System.out.println("Do you want to leave the game?");
             System.out.println("1. Yes;");
@@ -111,12 +113,54 @@ public class GoldRush {
             }
             while(fl);
 
+            System.out.print("\033\143");
+
+            System.out.println("Week number " + week + " has arrived.");
+            System.out.println("Current money supply: $" + fortyNiner.getMoney());
+            System.out.println("Current endurance level: " + fortyNiner.getEndurance() + "%");
+            System.out.println("Current sluice durability level: " + fortyNiner.getTools().get(1).getDurability() + "%");
+            System.out.println("Current number of cradles: " + (fortyNiner.getTools().size() - 2));
+            System.out.println();
+
             try {
                 fortyNiner.itIsSundayAgain();
             } catch (IOException e) {
                 // Problem when writing to the file
                 e.printStackTrace();
             }
+
+            System.out.println("Press Enter key to continue...");
+            try {
+                System.in.read();
+            } catch(Exception e) {}
+            System.out.print("\033\143");
+
+            fortyNiner.useTools();
+
+            System.out.println("Press Enter key to continue...");
+            try {
+                System.in.read();
+            } catch(Exception e) {}
+            System.out.print("\033\143");
+
+            fortyNiner.buyFood();
+
+            System.out.println("Press Enter key to continue...");
+            try {
+                System.in.read();
+            } catch(Exception e) {}
+            System.out.print("\033\143");
+
+            fortyNiner.loseEndurance();
+
+            System.out.println("Press Enter key to continue...");
+            try {
+                System.in.read();
+            } catch(Exception e) {}
+            System.out.print("\033\143");
+
+
+            week++;
 
             System.out.println("Do you long for more cradles?");
             System.out.println("1. Yes;");
@@ -129,19 +173,44 @@ public class GoldRush {
         
                     switch(option) {
                         case 1:
+                            System.out.print("\033\143");
                             System.out.println("How many cradles shall we buy?");
                             int count = 0;
                             do {
                                 try {
                                     count = Integer.parseInt(console.readLine());
+                                    boolean mf = true;
+
+                                    int newMoney = count * 30;
+
+                                    while(fortyNiner.getMoney() < newMoney) {
+                                        mf = false;
+                                        count--;
+                                        newMoney = count * 30;
+                                    }
         
                                     for(int item = 0; item < count; item++) {
                                         Cradle cradle = new Cradle();
                                         fortyNiner.setTools(cradle);
                                     }
-                                    fortyNiner.setMoney(fortyNiner.getMoney() - 30 * count);
 
-                                    System.out.println("You spent $" + 30 * count + " on new cradles.");
+
+                                    fortyNiner.setMoney(fortyNiner.getMoney() - newMoney);
+
+                                    if(mf) {
+                                        System.out.println("You spent $" + newMoney + " on new cradles.");
+                                    }
+                                    else {
+                                        System.out.println("You don't have enough money for all of them! You bought only " + count + " of them.");
+                                        System.out.println("You spent $" + newMoney + " on new cradles.");
+                                    }
+                                    
+
+                                    System.out.println("Press Enter key to continue...");
+                                    try {
+                                        System.in.read();
+                                    } catch(Exception e) {}
+                                    System.out.print("\033\143");
 
                                     fl = false;
                                 } catch(NumberFormatException e){
@@ -153,6 +222,7 @@ public class GoldRush {
                             fl = false;
                             break;
                         case 2:
+                            System.out.print("\033\143");
                             // nothing
                             fl = false;
                             break;

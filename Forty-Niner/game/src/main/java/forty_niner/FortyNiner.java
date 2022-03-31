@@ -72,43 +72,67 @@ public class FortyNiner {
         newMoney = tool.useTool();
         money += newMoney;
         System.out.println("Sluice brought you $" + newMoney);
+
+        int dumped = 0;
         
+        newMoney = money;
         for(int i = 2; i < tools.size(); i++){
             tool = (Tool) tools.get(i);
-            newMoney = tool.useTool();
-            money += newMoney;
-            System.out.println("Cradle brought you $" + newMoney);
+            money += tool.useTool();
 
             if(tool.getDurability() == 0) {
                 tools.remove(tool);
-                System.out.println("Dumped broken cradle.");
+                dumped++;
             }
         }
 
-        System.out.println("Used tools. Current status:");
-        
-        tool = (Tool) tools.get(1);
-        System.out.println("Sluice - " + tool.getDurability());
+        System.out.println("Cradles brought you $" + (money - newMoney));
 
-        for(int i = 2; i < tools.size(); i++){
-            tool = (Tool) tools.get(i);
-            // System.out.println("Cradle - " + tool.getDurability());
+        switch(dumped) {
+            case 0: 
+                System.out.println("No cradles were harmed.");
+                break;
+            case 1: 
+                System.out.println("Dumped 1 broken cradle.");
+                break;
+            default: 
+                System.out.println("Dumped " + dumped + " broken cradles.");
+                break;
         }
 
-        System.out.println("Current Seated Liberty stack - $" + money + ".");
+        // System.out.println("Used tools. Current status:");
+        
+        // tool = (Tool) tools.get(1);
+        // System.out.println("Sluice: " + tool.getDurability() + "%");
+
+        // for(int i = 2; i < tools.size(); i++){
+        //     tool = (Tool) tools.get(i);
+        //     // System.out.println("Cradle: " + tool.getDurability() + "%");
+        // }
+
+        System.out.println("Current Seated Liberty stack: $" + money + ".");
     }
 
     public void buyFood() {
-        money -= rnd.nextInt(50 - 30 + 1) + 30;
+        int newMoney = rnd.nextInt(50 - 30 + 1) + 30;
+        money -= newMoney;
 
-        System.out.println("Bought food, only $" + money + " left of ye old chips!");
+        if(money < 0){
+            newMoney += money;
+            money = 0;
+
+            System.out.println("Oh no! You'll have to work with an empty belly, since you have no more money...");
+        }
+        else{
+            System.out.println("Bought food, spent $" + newMoney + " of ye old chips!");
+        }
     }
 
     public void loseEndurance() {
         endurance -= rnd.nextInt(25  - 10 + 1) + 10;
         if(endurance < 0) endurance = 0;
 
-        System.out.println("Lost endurance - right now at " + endurance + "%.");
+        System.out.println("Lost endurance - now at " + endurance + "%.");
     }
 
     public void itIsSundayAgain() throws IOException {
@@ -162,11 +186,16 @@ public class FortyNiner {
     }
 
     private void fixSluice() {
-        money -= 100;
-
-        Sluice sluice = (Sluice) tools.get(1);
-        sluice.repair();
-
-        System.out.println("Only $" + money + " left after fixing the ruddy sluice!");
+        if(money < 100) {
+            System.out.println("Turns out you don't have enough money to fix the sluice! Better luck next time.");
+        }
+        else {
+            money -= 100;
+    
+            Sluice sluice = (Sluice) tools.get(1);
+            sluice.repair();
+    
+            System.out.println("Only $" + money + " left after fixing the ruddy sluice!");
+        }
     }
 }
