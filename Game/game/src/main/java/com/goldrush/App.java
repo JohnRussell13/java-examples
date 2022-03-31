@@ -33,27 +33,30 @@ public class App extends Application {
 
 
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
-        final ImageView selectedImage = new ImageView(new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bg.jpg"));
-        selectedImage.setX(0);
-        selectedImage.setY(0);
+        final ImageView backgroundImage = new ImageView(new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bg.jpg"));
+        backgroundImage.setX(0);
+        backgroundImage.setY(0);
 
-        Rectangle rect = new Rectangle (50, 100);    
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        final ImageView userImage = new ImageView(new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/player.png"));
+        userImage.setX(0);
+        userImage.setY(0);
     
         Path path = new Path();
-        path.getElements().add (new MoveTo (100, 200));
-        path.getElements().add (new LineTo (400, 200));
+        path.getElements().add (new MoveTo (400, 222));
+        path.getElements().add (new LineTo (83, 222));
     
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(4000));
-        pathTransition.setNode(rect);
+        pathTransition.setNode(userImage);
         pathTransition.setPath(path);
     
         pathTransition.play();
 
         Pane layout = new Pane();
-        layout.getChildren().add(selectedImage);
+        layout.getChildren().add(backgroundImage);
         layout.getChildren().add(button);
-        layout.getChildren().add(rect);
+        layout.getChildren().add(userImage);
 
         Scene scene = new Scene(layout, 600, 457);
         primaryStage.setScene(scene);
