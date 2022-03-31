@@ -33,10 +33,7 @@ public class App extends Application {
     /*      IMAGE CONFIGURATIONS        */
 
     private ImgConfig imgConfig = new ImgConfig();
-
-    /*      CONFIG      */
-    int topTreeCount = 11;
-    int botTreeCount = 14;
+    private ImgPos imgPos = new ImgPos();
 
     private boolean fs = true;
 
@@ -77,54 +74,41 @@ public class App extends Application {
         ImageView bridgeImage = new ImageView(bridge);
         bridgeImage.setFitHeight(imgConfig.getIHBR());
         bridgeImage.setFitWidth(imgConfig.getIWBR());
-        bridgeImage.relocate(90, 200); 
+        bridgeImage.relocate(imgPos.getBRX(), imgPos.getBRY()); 
         ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
 
         /*      CREATE TREES BELOW PLAYER   */
 
-        ImageView botTreeImage[] = new ImageView[botTreeCount];
-        for(int i = 0; i < botTreeCount; i++) {
+        ImageView botTreeImage[] = new ImageView[imgPos.getBC()];
+        for(int i = 0; i < imgPos.getBC(); i++) {
             botTreeImage[i] = new ImageView(tree);
             botTreeImage[i].setFitHeight(imgConfig.getIHTR());
             botTreeImage[i].setFitWidth(imgConfig.getIWTR());
-            if(i < 7) {
-                botTreeImage[i].relocate(150 - imgConfig.getIWTR()/2 + i*imgConfig.getIWTR(), 10 - imgConfig.getIHTR()/3);
-            }
-            else {
-                botTreeImage[i].relocate(150 + i%7*imgConfig.getIWTR(), 10);
-            }
+            botTreeImage[i].relocate(imgPos.getBFX(i), imgPos.getBFY(i));
         }
         ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
 
         /*      CREATE TREES ABOVE PLAYER   */
 
-        ImageView topTreeImage[] = new ImageView[topTreeCount];
-        for(int i = 0; i < topTreeCount; i++) {
+        ImageView topTreeImage[] = new ImageView[imgPos.getTC()];
+        for(int i = 0; i < imgPos.getTC(); i++) {
             topTreeImage[i] = new ImageView(tree);
             topTreeImage[i].setFitHeight(imgConfig.getIHTR());
             topTreeImage[i].setFitWidth(imgConfig.getIWTR());
-            if(i < 4) {
-                topTreeImage[i].relocate(320 - imgConfig.getIWTR()/2 + i*imgConfig.getIWTR(), 285 - imgConfig.getIHTR()/3);
-            }
-            else if(i < 8) {
-                topTreeImage[i].relocate(320 + i%4*imgConfig.getIWTR(), 285);
-            }
-            else {
-                topTreeImage[i].relocate(320 + imgConfig.getIWTR()/2 + i%8*imgConfig.getIWTR(), 285 + imgConfig.getIHTR()/3);
-            }
+            topTreeImage[i].relocate(imgPos.getTFX(i), imgPos.getTFY(i));
         }
 
         /*      CREATE LAYOUT       */
 
         Pane layout = new Pane();
         layout.getChildren().add(backgroundImage);
-        for(int i = 0; i < botTreeCount; i++) {
+        for(int i = 0; i < imgPos.getBC(); i++) {
             layout.getChildren().add(botTreeImage[i]);
         }
         layout.getChildren().add(riverImage);
         layout.getChildren().add(bridgeImage);
         layout.getChildren().add(playerImage);
-        for(int i = 0; i < topTreeCount; i++) {
+        for(int i = 0; i < imgPos.getTC(); i++) {
             layout.getChildren().add(topTreeImage[i]);
         }
         layout.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -162,8 +146,8 @@ public class App extends Application {
                         upScaler(playerImage, idPL);
                         upScaler(riverImage, idRV);
                         upScaler(bridgeImage, idBR);
-                        upScaler(botTreeImage, botTreeCount, idTR);
-                        upScaler(topTreeImage, topTreeCount, idTR);
+                        upScaler(botTreeImage, imgPos.getBC(), idTR);
+                        upScaler(topTreeImage, imgPos.getTC(), idTR);
                         stepSize = upScaler(stepSize);
                         primaryStage.setFullScreen(true);
                         fs = !fs;
@@ -173,8 +157,8 @@ public class App extends Application {
                         downScaler(playerImage, idPL);
                         downScaler(riverImage, idRV);
                         downScaler(bridgeImage, idBR);
-                        downScaler(botTreeImage, botTreeCount, idTR);
-                        downScaler(topTreeImage, topTreeCount, idTR);
+                        downScaler(botTreeImage, imgPos.getBC(), idTR);
+                        downScaler(topTreeImage, imgPos.getTC(), idTR);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
@@ -186,8 +170,8 @@ public class App extends Application {
                         downScaler(playerImage, idPL);
                         downScaler(riverImage, idRV);
                         downScaler(bridgeImage, idBR);
-                        downScaler(botTreeImage, botTreeCount, idTR);
-                        downScaler(topTreeImage, topTreeCount, idTR);
+                        downScaler(botTreeImage, imgPos.getBC(), idTR);
+                        downScaler(topTreeImage, imgPos.getTC(), idTR);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
