@@ -14,6 +14,8 @@ public class ImgConfig {
     private double initWidthTR;
     private double initHeightBR;
     private double initWidthBR;
+    private double initHeightSL;
+    private double initWidthSL;
 
     private double ratioFS;
     private double blackStripWidth;
@@ -39,6 +41,8 @@ public class ImgConfig {
             initWidthTR = Double.parseDouble(scanIn.nextLine());
             initHeightBR = Double.parseDouble(scanIn.nextLine());
             initWidthBR = Double.parseDouble(scanIn.nextLine());
+            initHeightSL = Double.parseDouble(scanIn.nextLine());
+            initWidthSL = Double.parseDouble(scanIn.nextLine());
             scanIn.close();
 
             ratioFS = fullHeightBG / initHeightBG;
@@ -58,6 +62,8 @@ public class ImgConfig {
     public double getIWTR() {return initWidthTR;}
     public double getIHBR() {return initHeightBR;}
     public double getIWBR() {return initWidthBR;}
+    public double getIHSL() {return initHeightSL;}
+    public double getIWSL() {return initWidthSL;}
 
     public double getRFS() {return ratioFS;}
     public double getBSW() {return blackStripWidth;}

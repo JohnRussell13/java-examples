@@ -28,12 +28,15 @@ public class App extends Application {
     private Image river = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/river.png");
     private Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
     private Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
+    private Image saloon = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/saloon.png");
 
 
     /*      IMAGE CONFIGURATIONS        */
 
     private ImgConfig imgConfig = new ImgConfig();
     private ImgPos imgPosBridge = new ImgPos("bridge");
+    private ImgPos imgPosRiver = new ImgPos("river");
+    private ImgPos imgPosSaloon = new ImgPos("saloon");
     private ImgPos imgPosBotFor = new ImgPos("botForest");
     private ImgPos imgPosTopFor = new ImgPos("topForest");
     private ImgDims idBG = new ImgDims(imgConfig.getIHBG(), imgConfig.getIWBG(), imgConfig.getRFS());
@@ -41,6 +44,7 @@ public class App extends Application {
     private ImgDims idRV = new ImgDims(imgConfig.getIHRV(), imgConfig.getIWRV(), imgConfig.getRFS());
     private ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
     private ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
+    private ImgDims idSL = new ImgDims(imgConfig.getIHSL(), imgConfig.getIWSL(), imgConfig.getRFS());
 
     private boolean fs = true;
 
@@ -74,6 +78,7 @@ public class App extends Application {
         ImageView riverImage = new ImageView(river);
         riverImage.setFitHeight(imgConfig.getIHRV());
         riverImage.setFitWidth(imgConfig.getIWRV());
+        riverImage.relocate(imgPosRiver.getPosX(0), imgPosRiver.getPosY(0));
 
         /*      CREATE BRIDGE       */
 
@@ -102,6 +107,13 @@ public class App extends Application {
             topTreeImage[i].relocate(imgPosTopFor.getPosX(i), imgPosTopFor.getPosY(i));
         }
 
+        /*      CREATE SALOON       */
+
+        ImageView sallonImage = new ImageView(saloon);
+        sallonImage.setFitHeight(imgConfig.getIHSL());
+        sallonImage.setFitWidth(imgConfig.getIWSL());
+        sallonImage.relocate(imgPosSaloon.getPosX(0), imgPosSaloon.getPosY(0)); 
+
         /*      CREATE LAYOUT       */
 
         Pane layout = new Pane();
@@ -115,6 +127,7 @@ public class App extends Application {
         for(int i = 0; i < topTreeImage.length; i++) {
             layout.getChildren().add(topTreeImage[i]);
         }
+        layout.getChildren().add(sallonImage);
         layout.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
         /*      CREATE THE SCENE        */
@@ -131,18 +144,18 @@ public class App extends Application {
             public void handle(KeyEvent event) {
                 switch(event.getCode()){
                 case W:
-                    go(playerImage, 'W', botTreeImage, topTreeImage, backgroundImage);
+                    go(playerImage, 'W', botTreeImage, topTreeImage, backgroundImage, sallonImage);
                     break;
                 case S:
-                    go(playerImage, 'S', botTreeImage, topTreeImage, backgroundImage);
+                    go(playerImage, 'S', botTreeImage, topTreeImage, backgroundImage, sallonImage);
                     break;
                 case A:
                     playerImage.setImage(playerLeft);
-                    go(playerImage, 'A', botTreeImage, topTreeImage, backgroundImage);
+                    go(playerImage, 'A', botTreeImage, topTreeImage, backgroundImage, sallonImage);
                     break;
                 case D:
                     playerImage.setImage(playerRight);
-                    go(playerImage, 'D', botTreeImage, topTreeImage, backgroundImage);
+                    go(playerImage, 'D', botTreeImage, topTreeImage, backgroundImage, sallonImage);
                     break;
                 case F:
                     if(fs) {
@@ -152,6 +165,7 @@ public class App extends Application {
                         upScaler(bridgeImage, idBR);
                         upScaler(botTreeImage, idTR);
                         upScaler(topTreeImage, idTR);
+                        upScaler(sallonImage, idSL);
                         stepSize = upScaler(stepSize);
                         primaryStage.setFullScreen(true);
                         fs = !fs;
@@ -163,6 +177,7 @@ public class App extends Application {
                         downScaler(bridgeImage, idBR);
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
+                        downScaler(sallonImage, idSL);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
@@ -176,6 +191,7 @@ public class App extends Application {
                         downScaler(bridgeImage, idBR);
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
+                        downScaler(sallonImage, idSL);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
@@ -230,7 +246,7 @@ public class App extends Application {
         }
     }
 
-    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF, ImageView bkg){
+    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF, ImageView bkg, ImageView sln){
         double posX = img.getLayoutX();
         double posY = img.getLayoutY();
         double newX = posX;
@@ -261,8 +277,8 @@ public class App extends Application {
         for(int i = 0; i < botF.length; i++){
             t1 = ((botF[i].getLayoutX() + botF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
             t2 = ((botF[i].getLayoutY() + botF[i].getFitHeight()) - (newY + img.getFitHeight()));
-            if(-botF[i].getFitWidth() < t1 && t1 < botF[i].getFitWidth() 
-            && 0.4*botF[i].getFitHeight() < t2 && t2 < 1.2*botF[i].getFitHeight()) {
+            if(-0.7*botF[i].getFitWidth() < t1 && t1 < 0.7*botF[i].getFitWidth() 
+            && 0 < t2 && t2 < botF[i].getFitHeight()) {
                 return;
             }
         }
@@ -272,18 +288,18 @@ public class App extends Application {
         for(int i = 0; i < topF.length; i++){
             t1 = ((topF[i].getLayoutX() + topF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
             t2 = ((topF[i].getLayoutY() + topF[i].getFitHeight()) - (newY + img.getFitHeight()));
-            if(-0.4*topF[i].getFitWidth() < t1 && t1 < topF[i].getFitWidth() 
-            && 0.1*topF[i].getFitHeight() < t2 && t2 < 0.7*topF[i].getFitHeight()) return;
+            if(-0.7*topF[i].getFitWidth() < t1 && t1 < 0.7*topF[i].getFitWidth() 
+            && -0.35*topF[i].getFitHeight() < t2 && t2 < 0.2*topF[i].getFitHeight()) return;
         }
 
         /*      NO HITS WITH BORDERS     */
 
-        System.out.println(bkg.getLayoutX() + bkg.getFitWidth());
-        System.out.println(img.getFitWidth());
         if(bkg.getLayoutX() > newX || newX + 1.1*img.getFitWidth() > bkg.getLayoutX() + bkg.getFitWidth() 
         || bkg.getLayoutY() > newY || newY + 1.1*img.getFitHeight() > bkg.getLayoutY() + bkg.getFitHeight()) return;
 
         img.relocate(newX, newY);
+
+
     }
     
 }
