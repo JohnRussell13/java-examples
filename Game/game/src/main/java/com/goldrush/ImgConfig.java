@@ -65,25 +65,75 @@ public class ImgConfig {
         }
     }
 
-    public double getIHBG() {return initHeightBG;}
-    public double getIWBG() {return initWidthBG;}
-    public double getIHPL() {return initHeightPL;}
-    public double getIWPL() {return initWidthPL;}
-    public double getIHRV() {return initHeightRV;}
-    public double getIWRV() {return initWidthRV;}
-    public double getIHTR() {return initHeightTR;}
-    public double getIWTR() {return initWidthTR;}
-    public double getIHBR() {return initHeightBR;}
-    public double getIWBR() {return initWidthBR;}
-    public double getIHSL() {return initHeightSL;}
-    public double getIWSL() {return initWidthSL;}
-    public double getIHHS() {return initHeightHS;}
-    public double getIWHS() {return initWidthHS;}
-    public double getIHMN() {return initHeightMN;}
-    public double getIWMN() {return initWidthMN;}
+    public double getInitialHeight(String name) {
+        switch (name){
+        case "background":
+            return initHeightBG;
+        case "player":
+            return initHeightPL;
+        case "river":
+            return initHeightRV;
+        case "tree":
+            return initHeightTR;
+        case "bridge":
+            return initHeightBR;
+        case "saloon":
+            return initHeightSL;
+        case "house":
+            return initHeightHS;
+        case "menu":
+            return initHeightMN;
+        case "popUp":
+            return initHeightPU;
+        default:
+            return 0;
+        }
+    }
 
-    public double getIHPU() {return initHeightPU;}
-    public double getIWPU() {return initWidthPU;}
+    public double getInitialWidth(String name) {
+    switch (name){
+        case "background":
+            return initWidthBG;
+        case "player":
+            return initWidthPL;
+        case "river":
+            return initWidthRV;
+        case "tree":
+            return initWidthTR;
+        case "bridge":
+            return initWidthBR;
+        case "saloon":
+            return initWidthSL;
+        case "house":
+            return initWidthHS;
+        case "menu":
+            return initWidthMN;
+        case "popUp":
+            return initWidthPU;
+        default:
+            return 0;
+        }
+    }
+
+    // public double getIHBG() {return initHeightBG;}
+    // public double getIWBG() {return initWidthBG;}
+    // public double getIHPL() {return initHeightPL;}
+    // public double getIWPL() {return initWidthPL;}
+    // public double getIHRV() {return initHeightRV;}
+    // public double getIWRV() {return initWidthRV;}
+    // public double getIHTR() {return initHeightTR;}
+    // public double getIWTR() {return initWidthTR;}
+    // public double getIHBR() {return initHeightBR;}
+    // public double getIWBR() {return initWidthBR;}
+    // public double getIHSL() {return initHeightSL;}
+    // public double getIWSL() {return initWidthSL;}
+    // public double getIHHS() {return initHeightHS;}
+    // public double getIWHS() {return initWidthHS;}
+    // public double getIHMN() {return initHeightMN;}
+    // public double getIWMN() {return initWidthMN;}
+
+    // public double getIHPU() {return initHeightPU;}
+    // public double getIWPU() {return initWidthPU;}
 
     public double getRFS() {return ratioFS;}
     public double getBSW() {return blackStripWidth;}

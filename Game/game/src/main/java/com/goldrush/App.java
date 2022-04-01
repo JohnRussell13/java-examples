@@ -38,6 +38,8 @@ public class App extends Application {
     /*      IMAGE CONFIGURATIONS        */
 
     private ImgConfig imgConfig = new ImgConfig();
+
+    private ImgPos imgPosPlayer = new ImgPos("player");
     private ImgPos imgPosBridge = new ImgPos("bridge");
     private ImgPos imgPosRiver = new ImgPos("river");
     private ImgPos imgPosSaloon = new ImgPos("saloon");
@@ -45,15 +47,16 @@ public class App extends Application {
     private ImgPos imgPosMenu = new ImgPos("menu");
     private ImgPos imgPosBotFor = new ImgPos("botForest");
     private ImgPos imgPosTopFor = new ImgPos("topForest");
-    private ImgDims idBG = new ImgDims(imgConfig.getIHBG(), imgConfig.getIWBG(), imgConfig.getRFS());
-    private ImgDims idMN = new ImgDims(imgConfig.getIHMN(), imgConfig.getIWMN(), imgConfig.getRFS());
-    private ImgDims idPL = new ImgDims(imgConfig.getIHPL(), imgConfig.getIWPL(), imgConfig.getRFS());
-    private ImgDims idRV = new ImgDims(imgConfig.getIHRV(), imgConfig.getIWRV(), imgConfig.getRFS());
-    private ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
-    private ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
-    private ImgDims idSL = new ImgDims(imgConfig.getIHSL(), imgConfig.getIWSL(), imgConfig.getRFS());
-    private ImgDims idHS = new ImgDims(imgConfig.getIHHS(), imgConfig.getIWHS(), imgConfig.getRFS());
-    private ImgDims idPU = new ImgDims(imgConfig.getIHPU(), imgConfig.getIWPU(), imgConfig.getRFS());
+
+    private ImgDims idBG = new ImgDims(imgConfig.getInitialHeight("background"), imgConfig.getInitialWidth("background"), imgConfig.getRFS());
+    private ImgDims idMN = new ImgDims(imgConfig.getInitialHeight("menu"), imgConfig.getInitialWidth("menu"), imgConfig.getRFS());
+    private ImgDims idPL = new ImgDims(imgConfig.getInitialHeight("player"), imgConfig.getInitialWidth("player"), imgConfig.getRFS());
+    private ImgDims idRV = new ImgDims(imgConfig.getInitialHeight("river"), imgConfig.getInitialWidth("river"), imgConfig.getRFS());
+    private ImgDims idBR = new ImgDims(imgConfig.getInitialHeight("bridge"), imgConfig.getInitialWidth("bridge"), imgConfig.getRFS());
+    private ImgDims idTR = new ImgDims(imgConfig.getInitialHeight("tree"), imgConfig.getInitialWidth("tree"), imgConfig.getRFS());
+    private ImgDims idSL = new ImgDims(imgConfig.getInitialHeight("saloon"), imgConfig.getInitialWidth("saloon"), imgConfig.getRFS());
+    private ImgDims idHS = new ImgDims(imgConfig.getInitialHeight("house"), imgConfig.getInitialWidth("house"), imgConfig.getRFS());
+    private ImgDims idPU = new ImgDims(imgConfig.getInitialHeight("popUp"), imgConfig.getInitialWidth("popUp"), imgConfig.getRFS());
 
     private boolean fs = true; // non-fullscreen flag
     private boolean fps = true; // non-popUpS flag
@@ -86,67 +89,25 @@ public class App extends Application {
         primaryStage.setTitle("Gold Rush");
 
         /*      CREATE BACKGROUND       */
-
         //backgroundImage.setPreserveRatio(true); // false if strech
-        backgroundImage.setFitHeight(imgConfig.getIHBG());
-        backgroundImage.setFitWidth(imgConfig.getIWBG());
+        backgroundImage.setFitHeight(imgConfig.getInitialHeight("background"));
+        backgroundImage.setFitWidth(imgConfig.getInitialWidth("background"));
 
-        /*      CREATE MENU     */
+        /*      SET IMAGES      */
 
-        menuImage.setFitHeight(imgConfig.getIHMN());
-        menuImage.setFitWidth(imgConfig.getIWMN());
-        menuImage.relocate(imgPosMenu.getPosX(0), imgPosMenu.getPosY(0)); 
+        imgSet(menuImage, imgPosMenu, "menu");
+        imgSet(playerImage, imgPosPlayer, "player");
+        imgSet(riverImage, imgPosRiver, "river");
+        imgSet(bridgeImage, imgPosBridge, "bridge");
+        imgSet(saloonImage, imgPosSaloon, "saloon");
+        imgSet(houseImage, imgPosHouse, "house");
 
-        /*      CREATE PLAYER       */
-
-        playerImage.setFitHeight(imgConfig.getIHPL());
-        playerImage.setFitWidth(imgConfig.getIWPL());
-        // idk why, but it breaks when init location is set directly
-        playerImage.relocate(imgConfig.getIWBG()/2 - imgConfig.getIWPL()/2, imgConfig.getIHBG()/2 - imgConfig.getIHPL()/2);
-
-        /*      CREATE RIVER        */
-
-        riverImage.setFitHeight(imgConfig.getIHRV());
-        riverImage.setFitWidth(imgConfig.getIWRV());
-        riverImage.relocate(imgPosRiver.getPosX(0), imgPosRiver.getPosY(0));
-
-        /*      CREATE BRIDGE       */
-
-        bridgeImage.setFitHeight(imgConfig.getIHBR());
-        bridgeImage.setFitWidth(imgConfig.getIWBR());
-        bridgeImage.relocate(imgPosBridge.getPosX(0), imgPosBridge.getPosY(0)); 
-
-        /*      CREATE TREES BELOW PLAYER   */
+        /*      CREATE TREES        */
 
         ImageView botTreeImage[] = new ImageView[imgPosBotFor.getCount()];
-        for(int i = 0; i < botTreeImage.length; i++) {
-            botTreeImage[i] = new ImageView(tree);
-            botTreeImage[i].setFitHeight(imgConfig.getIHTR());
-            botTreeImage[i].setFitWidth(imgConfig.getIWTR());
-            botTreeImage[i].relocate(imgPosBotFor.getPosX(i), imgPosBotFor.getPosY(i));
-        }
-
-        /*      CREATE TREES ABOVE PLAYER   */
-
+        imgSet(botTreeImage, imgPosBotFor, "tree");
         ImageView topTreeImage[] = new ImageView[imgPosTopFor.getCount()];
-        for(int i = 0; i < topTreeImage.length; i++) {
-            topTreeImage[i] = new ImageView(tree);
-            topTreeImage[i].setFitHeight(imgConfig.getIHTR());
-            topTreeImage[i].setFitWidth(imgConfig.getIWTR());
-            topTreeImage[i].relocate(imgPosTopFor.getPosX(i), imgPosTopFor.getPosY(i));
-        }
-
-        /*      CREATE SALOON       */
-
-        saloonImage.setFitHeight(imgConfig.getIHSL());
-        saloonImage.setFitWidth(imgConfig.getIWSL());
-        saloonImage.relocate(imgPosSaloon.getPosX(0), imgPosSaloon.getPosY(0)); 
-
-        /*      CREATE HOUSEE      */
-
-        houseImage.setFitHeight(imgConfig.getIHHS());
-        houseImage.setFitWidth(imgConfig.getIWHS());
-        houseImage.relocate(imgPosHouse.getPosX(0), imgPosHouse.getPosY(0)); 
+        imgSet(topTreeImage, imgPosTopFor, "tree");
 
         /*      CREATE LAYOUT       */
 
@@ -167,7 +128,7 @@ public class App extends Application {
 
         /*      CREATE THE SCENE        */
 
-        Scene scene = new Scene(layout, imgConfig.getIWBG(), imgConfig.getIHBG());
+        Scene scene = new Scene(layout, imgConfig.getInitialWidth("background"), imgConfig.getInitialHeight("background"));
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -262,17 +223,10 @@ public class App extends Application {
         });
 
         /*      CREATE POP UP       */
-
-        popUpSImage.setFitHeight(imgConfig.getIHPU());
-        popUpSImage.setFitWidth(imgConfig.getIWPU());
-        popUpSImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
-            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight()); 
-
-        popUpHImage.setFitHeight(imgConfig.getIHPU());
-        popUpHImage.setFitWidth(imgConfig.getIWPU());
-        popUpHImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
-            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight()); 
-        
+        imgSet(popUpSImage, backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight(), "popUp");
+        imgSet(popUpHImage, backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight(), "popUp");        
     }
 
     /*      FULLSCREEN FUNCTIONS        */
@@ -380,6 +334,7 @@ public class App extends Application {
         }
 
         /*      NO HITS WITH SALOON, EXCEPT WITH DOORS      */
+
         if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight())
         && saloonImage.getLayoutX() < t1 && t1 < saloonImage.getLayoutX() + saloonImage.getFitWidth()){
             if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
@@ -411,6 +366,27 @@ public class App extends Application {
         layout.getChildren().add(popUpHImage);
         fph = false;
         fp = false;
+    }
+
+    private void imgSet(ImageView imageView, ImgPos imgPos, String name){
+        imageView.setFitHeight(imgConfig.getInitialHeight(name));
+        imageView.setFitWidth(imgConfig.getInitialWidth(name));
+        imageView.relocate(imgPos.getPosX(0), imgPos.getPosY(0)); 
+    }
+
+    private void imgSet(ImageView imageView, double posX, double posY, String name){
+        imageView.setFitHeight(imgConfig.getInitialHeight(name));
+        imageView.setFitWidth(imgConfig.getInitialWidth(name));
+        imageView.relocate(posX, posY); 
+    }
+
+    private void imgSet(ImageView[] imageView, ImgPos imgPos, String name){
+        for(int i = 0; i < imageView.length; i++) {
+            imageView[i] = new ImageView(tree);
+            imageView[i].setFitHeight(imgConfig.getInitialHeight(name));
+            imageView[i].setFitWidth(imgConfig.getInitialWidth(name));
+            imageView[i].relocate(imgPos.getPosX(i), imgPos.getPosY(i));
+        }
     }
     
 }
