@@ -46,9 +46,21 @@ public class App extends Application {
     private ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
     private ImgDims idSL = new ImgDims(imgConfig.getIHSL(), imgConfig.getIWSL(), imgConfig.getRFS());
 
-    private boolean fs = true;
+    private boolean fs = true; // non-fullscreen flag
+    private boolean fp = true; // non-popUp flag
 
     private double stepSize = 5;
+
+    /*      IMAGES      */
+    private ImageView backgroundImage = new ImageView(background);
+    private ImageView playerImage = new ImageView(playerLeft); // initial orientation
+    private ImageView riverImage = new ImageView(river);
+    private ImageView bridgeImage = new ImageView(bridge);
+    private ImageView saloonImage = new ImageView(saloon);
+    private Pane layout = new Pane();
+
+    private ImageView popUpImage = new ImageView(saloon);
+
     
     public static void main(String[] args) {
         launch();
@@ -60,14 +72,12 @@ public class App extends Application {
 
         /*      CREATE BACKGROUND       */
 
-        final ImageView backgroundImage = new ImageView(background);
         //backgroundImage.setPreserveRatio(true); // false if strech
         backgroundImage.setFitHeight(imgConfig.getIHBG());
         backgroundImage.setFitWidth(imgConfig.getIWBG());
 
         /*      CREATE PLAYER       */
 
-        ImageView playerImage = new ImageView(playerLeft); // initial orientation
         playerImage.setFitHeight(imgConfig.getIHPL());
         playerImage.setFitWidth(imgConfig.getIWPL());
         // idk why, but it breaks when init location is set directly
@@ -75,14 +85,12 @@ public class App extends Application {
 
         /*      CREATE RIVER        */
 
-        ImageView riverImage = new ImageView(river);
         riverImage.setFitHeight(imgConfig.getIHRV());
         riverImage.setFitWidth(imgConfig.getIWRV());
         riverImage.relocate(imgPosRiver.getPosX(0), imgPosRiver.getPosY(0));
 
         /*      CREATE BRIDGE       */
 
-        ImageView bridgeImage = new ImageView(bridge);
         bridgeImage.setFitHeight(imgConfig.getIHBR());
         bridgeImage.setFitWidth(imgConfig.getIWBR());
         bridgeImage.relocate(imgPosBridge.getPosX(0), imgPosBridge.getPosY(0)); 
@@ -109,25 +117,23 @@ public class App extends Application {
 
         /*      CREATE SALOON       */
 
-        ImageView sallonImage = new ImageView(saloon);
-        sallonImage.setFitHeight(imgConfig.getIHSL());
-        sallonImage.setFitWidth(imgConfig.getIWSL());
-        sallonImage.relocate(imgPosSaloon.getPosX(0), imgPosSaloon.getPosY(0)); 
+        saloonImage.setFitHeight(imgConfig.getIHSL());
+        saloonImage.setFitWidth(imgConfig.getIWSL());
+        saloonImage.relocate(imgPosSaloon.getPosX(0), imgPosSaloon.getPosY(0)); 
 
         /*      CREATE LAYOUT       */
 
-        Pane layout = new Pane();
         layout.getChildren().add(backgroundImage);
         for(int i = 0; i < botTreeImage.length; i++) {
             layout.getChildren().add(botTreeImage[i]);
         }
+        layout.getChildren().add(saloonImage);
         layout.getChildren().add(riverImage);
         layout.getChildren().add(bridgeImage);
         layout.getChildren().add(playerImage);
         for(int i = 0; i < topTreeImage.length; i++) {
             layout.getChildren().add(topTreeImage[i]);
         }
-        layout.getChildren().add(sallonImage);
         layout.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
         /*      CREATE THE SCENE        */
@@ -144,18 +150,18 @@ public class App extends Application {
             public void handle(KeyEvent event) {
                 switch(event.getCode()){
                 case W:
-                    go(playerImage, 'W', botTreeImage, topTreeImage, backgroundImage, sallonImage);
+                    if(fp) go('W', botTreeImage, topTreeImage);
                     break;
                 case S:
-                    go(playerImage, 'S', botTreeImage, topTreeImage, backgroundImage, sallonImage);
+                    if(fp) go('S', botTreeImage, topTreeImage);
                     break;
                 case A:
                     playerImage.setImage(playerLeft);
-                    go(playerImage, 'A', botTreeImage, topTreeImage, backgroundImage, sallonImage);
+                    if(fp) go('A', botTreeImage, topTreeImage);
                     break;
                 case D:
                     playerImage.setImage(playerRight);
-                    go(playerImage, 'D', botTreeImage, topTreeImage, backgroundImage, sallonImage);
+                    if(fp) go('D', botTreeImage, topTreeImage);
                     break;
                 case F:
                     if(fs) {
@@ -165,7 +171,7 @@ public class App extends Application {
                         upScaler(bridgeImage, idBR);
                         upScaler(botTreeImage, idTR);
                         upScaler(topTreeImage, idTR);
-                        upScaler(sallonImage, idSL);
+                        upScaler(saloonImage, idSL);
                         stepSize = upScaler(stepSize);
                         primaryStage.setFullScreen(true);
                         fs = !fs;
@@ -177,7 +183,7 @@ public class App extends Application {
                         downScaler(bridgeImage, idBR);
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
-                        downScaler(sallonImage, idSL);
+                        downScaler(saloonImage, idSL);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
@@ -191,17 +197,28 @@ public class App extends Application {
                         downScaler(bridgeImage, idBR);
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
-                        downScaler(sallonImage, idSL);
+                        downScaler(saloonImage, idSL);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
                     }
+                case K:
+                    layout.getChildren().remove(popUpImage);
+                    fp = true;
                 default:
                     break;
                 }
             }
             
         });
+
+        /*      CREATE POP UP       */
+
+        popUpImage.setFitHeight(0.8*backgroundImage.getFitHeight());
+        popUpImage.setFitWidth(0.8*backgroundImage.getFitWidth());
+        popUpImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight()); 
+        
     }
 
     /*      FULLSCREEN FUNCTIONS        */
@@ -246,9 +263,9 @@ public class App extends Application {
         }
     }
 
-    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF, ImageView bkg, ImageView sln){
-        double posX = img.getLayoutX();
-        double posY = img.getLayoutY();
+    private void go(char dir, ImageView[] botT, ImageView[] topT){
+        double posX = playerImage.getLayoutX();
+        double posY = playerImage.getLayoutY();
         double newX = posX;
         double newY = posY;
 
@@ -274,32 +291,54 @@ public class App extends Application {
 
         /*      NO HITS WITH BOTTOM TREES       */
         
-        for(int i = 0; i < botF.length; i++){
-            t1 = ((botF[i].getLayoutX() + botF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
-            t2 = ((botF[i].getLayoutY() + botF[i].getFitHeight()) - (newY + img.getFitHeight()));
-            if(-0.7*botF[i].getFitWidth() < t1 && t1 < 0.7*botF[i].getFitWidth() 
-            && 0 < t2 && t2 < botF[i].getFitHeight()) {
+        for(int i = 0; i < botT.length; i++){
+            t1 = ((botT[i].getLayoutX() + botT[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
+            t2 = ((botT[i].getLayoutY() + botT[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
+            if(-0.7*botT[i].getFitWidth() < t1 && t1 < 0.7*botT[i].getFitWidth() 
+            && 0 < t2 && t2 < botT[i].getFitHeight()) {
                 return;
             }
         }
 
         /*      NO HITS WITH TOP TREES      */
         
-        for(int i = 0; i < topF.length; i++){
-            t1 = ((topF[i].getLayoutX() + topF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
-            t2 = ((topF[i].getLayoutY() + topF[i].getFitHeight()) - (newY + img.getFitHeight()));
-            if(-0.7*topF[i].getFitWidth() < t1 && t1 < 0.7*topF[i].getFitWidth() 
-            && -0.35*topF[i].getFitHeight() < t2 && t2 < 0.2*topF[i].getFitHeight()) return;
+        for(int i = 0; i < topT.length; i++){
+            t1 = ((topT[i].getLayoutX() + topT[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
+            t2 = ((topT[i].getLayoutY() + topT[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
+            if(-0.7*topT[i].getFitWidth() < t1 && t1 < 0.7*topT[i].getFitWidth() 
+            && -0.35*topT[i].getFitHeight() < t2 && t2 < 0.2*topT[i].getFitHeight()) return;
         }
 
         /*      NO HITS WITH BORDERS     */
 
-        if(bkg.getLayoutX() > newX || newX + 1.1*img.getFitWidth() > bkg.getLayoutX() + bkg.getFitWidth() 
-        || bkg.getLayoutY() > newY || newY + 1.1*img.getFitHeight() > bkg.getLayoutY() + bkg.getFitHeight()) return;
+        if(backgroundImage.getLayoutX() > newX || newX + 1.1*playerImage.getFitWidth() > backgroundImage.getLayoutX() + backgroundImage.getFitWidth() 
+        || backgroundImage.getLayoutY() > newY || newY + 1.1*playerImage.getFitHeight() > backgroundImage.getLayoutY() + backgroundImage.getFitHeight()) return;
 
-        img.relocate(newX, newY);
+        /*      NO HITS WITH RIVER, EXCEPT ON BRIDGE        */
 
+        t1 = (newX + playerImage.getFitWidth()/2); // middle of the body width
+        t2 = (newY + playerImage.getFitHeight()); // legs
 
+        if(riverImage.getLayoutX() - playerImage.getFitWidth()/2 < t1 && t1 < riverImage.getLayoutX() + riverImage.getFitWidth() + playerImage.getFitWidth()/2) {
+            if( !(bridgeImage.getLayoutY() + 3*stepSize < t2 && t2 < bridgeImage.getLayoutY() + bridgeImage.getFitHeight()) ) {
+                return;
+            }
+        }
+
+        /*      NO HITS WITH SALOON, EXCEPT WITH DOORS      */
+        if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight() + 3*stepSize)){
+            if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
+                drinking();
+            }
+            return;
+        }
+
+        playerImage.relocate(newX, newY);
+    }
+
+    private void drinking(){
+        layout.getChildren().add(popUpImage);
+        fp = false;
     }
     
 }
