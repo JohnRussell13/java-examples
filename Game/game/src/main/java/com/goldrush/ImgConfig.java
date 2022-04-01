@@ -4,41 +4,41 @@ import java.io.*;
 import java.util.*;
 
 public class ImgConfig {
-    private float initHeightBG;
-    private float initWidthBG;
-    private float initHeightPL;
-    private float initWidthPL;
-    private float initHeightRV;
-    private float initWidthRV;
-    private float initHeightTR;
-    private float initWidthTR;
-    private float initHeightBR;
-    private float initWidthBR;
+    private double initHeightBG;
+    private double initWidthBG;
+    private double initHeightPL;
+    private double initWidthPL;
+    private double initHeightRV;
+    private double initWidthRV;
+    private double initHeightTR;
+    private double initWidthTR;
+    private double initHeightBR;
+    private double initWidthBR;
 
-    private float ratioFS;
-    private float blackStripWidth;
+    private double ratioFS;
+    private double blackStripWidth;
     
     public ImgConfig() {
         /*      POSITION FILES      */
     
         File config = new File(System.getProperty("user.dir") + "/src/main/resources/com/goldrush/config.txt");
 
-        float maxWidth;
-        float fullHeightBG;
+        double maxWidth;
+        double fullHeightBG;
         try {
             Scanner scanIn = new Scanner(config);
-            initHeightBG = Float.parseFloat(scanIn.nextLine());
-            initWidthBG = Float.parseFloat(scanIn.nextLine());
-            fullHeightBG = Float.parseFloat(scanIn.nextLine());
-            maxWidth = Float.parseFloat(scanIn.nextLine());
-            initHeightPL = Float.parseFloat(scanIn.nextLine());
-            initWidthPL = Float.parseFloat(scanIn.nextLine());
-            initHeightRV = Float.parseFloat(scanIn.nextLine());
-            initWidthRV = Float.parseFloat(scanIn.nextLine());
-            initHeightTR = Float.parseFloat(scanIn.nextLine());
-            initWidthTR = Float.parseFloat(scanIn.nextLine());
-            initHeightBR = Float.parseFloat(scanIn.nextLine());
-            initWidthBR = Float.parseFloat(scanIn.nextLine());
+            initHeightBG = Double.parseDouble(scanIn.nextLine());
+            initWidthBG = Double.parseDouble(scanIn.nextLine());
+            fullHeightBG = Double.parseDouble(scanIn.nextLine());
+            maxWidth = Double.parseDouble(scanIn.nextLine());
+            initHeightPL = Double.parseDouble(scanIn.nextLine());
+            initWidthPL = Double.parseDouble(scanIn.nextLine());
+            initHeightRV = Double.parseDouble(scanIn.nextLine());
+            initWidthRV = Double.parseDouble(scanIn.nextLine());
+            initHeightTR = Double.parseDouble(scanIn.nextLine());
+            initWidthTR = Double.parseDouble(scanIn.nextLine());
+            initHeightBR = Double.parseDouble(scanIn.nextLine());
+            initWidthBR = Double.parseDouble(scanIn.nextLine());
             scanIn.close();
 
             ratioFS = fullHeightBG / initHeightBG;
@@ -48,18 +48,18 @@ public class ImgConfig {
         }
     }
 
-    public float getIHBG() {return initHeightBG;}
-    public float getIWBG() {return initWidthBG;}
-    public float getIHPL() {return initHeightPL;}
-    public float getIWPL() {return initWidthPL;}
-    public float getIHRV() {return initHeightRV;}
-    public float getIWRV() {return initWidthRV;}
-    public float getIHTR() {return initHeightTR;}
-    public float getIWTR() {return initWidthTR;}
-    public float getIHBR() {return initHeightBR;}
-    public float getIWBR() {return initWidthBR;}
+    public double getIHBG() {return initHeightBG;}
+    public double getIWBG() {return initWidthBG;}
+    public double getIHPL() {return initHeightPL;}
+    public double getIWPL() {return initWidthPL;}
+    public double getIHRV() {return initHeightRV;}
+    public double getIWRV() {return initWidthRV;}
+    public double getIHTR() {return initHeightTR;}
+    public double getIWTR() {return initWidthTR;}
+    public double getIHBR() {return initHeightBR;}
+    public double getIWBR() {return initWidthBR;}
 
-    public float getRFS() {return ratioFS;}
-    public float getBSW() {return blackStripWidth;}
+    public double getRFS() {return ratioFS;}
+    public double getBSW() {return blackStripWidth;}
     
 }

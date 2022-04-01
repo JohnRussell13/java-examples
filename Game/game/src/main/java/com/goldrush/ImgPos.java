@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 
 public class ImgPos {
-    private float[] posX;
-    private float[] posY;
+    private double[] posX;
+    private double[] posY;
 
     private int count;
 
@@ -22,15 +22,15 @@ public class ImgPos {
 
         count = count / 2;
 
-        posX = new float[count];
-        posY = new float[count];
+        posX = new double[count];
+        posY = new double[count];
 
         File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/goldrush/pos/" + loc + ".txt");
         try {
             Scanner scanIn = new Scanner(file);
             for(int i = 0; i < count; i++) {
-                posX[i] = Float.parseFloat(scanIn.nextLine());
-                posY[i] = Float.parseFloat(scanIn.nextLine());
+                posX[i] = Double.parseDouble(scanIn.nextLine());
+                posY[i] = Double.parseDouble(scanIn.nextLine());
             }
             scanIn.close();
         } catch (Exception e) {
@@ -38,8 +38,8 @@ public class ImgPos {
         }
     }
 
-    public float getPosX(int pos) {return posX[pos];}
-    public float getPosY(int pos) {return posY[pos];}
+    public double getPosX(int pos) {return posX[pos];}
+    public double getPosY(int pos) {return posY[pos];}
 
     public int getCount() {return count;}
 }

@@ -1,31 +1,20 @@
 package com.goldrush;
 
 public class ImgDims {
-    private float initHeight;
-    private float initWidth;
-    private float fullHeight;
-    private float fullWidth;
+    private double initHeight;
+    private double initWidth;
+    private double fullHeight;
+    private double fullWidth;
 
-    public ImgDims(float height, float width, float ration){
+    public ImgDims(double height, double width, double ration){
         initHeight = height;
         initWidth = width;
         fullHeight = ration * height;
         fullWidth = ration * width;
     }
 
-    public float getIH(){
-        return initHeight;
-    }
-
-    public float getIW(){
-        return initWidth;
-    }
-
-    public float getFH(){
-        return fullHeight;
-    }
-
-    public float getFW(){
-        return fullWidth;
-    }
+    public double getIH() {return initHeight;}
+    public double getIW() {return initWidth;}
+    public double getFH() {return fullHeight;}
+    public double getFW() {return fullWidth;}
 }

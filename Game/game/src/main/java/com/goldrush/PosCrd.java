@@ -1,27 +1,27 @@
 package com.goldrush;
 
 public class PosCrd {
-    private float x;
-    private float y;
+    private double x;
+    private double y;
     
     public PosCrd() {
         x = 0;
         y = 0;
     }
 
-    public float getX(){
+    public double getX(){
         return x;
     }
 
-    public float getY(){
+    public double getY(){
         return y;
     }
 
-    public void setX(float val){
+    public void setX(double val){
         x = val;
     }
 
-    public void setY(float val){
+    public void setY(double val){
         y = val;
     }
 }

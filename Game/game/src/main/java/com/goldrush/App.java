@@ -21,13 +21,13 @@ import javafx.scene.input.KeyEvent;
 public class App extends Application {
     /*      IMAGES      */
 
-    Image playerLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerLeft.png");
-    Image playerRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerRight.png");
+    private Image playerLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerLeft.png");
+    private Image playerRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerRight.png");
 
-    Image background = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/background.png");
-    Image river = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/river.png");
-    Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
-    Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
+    private Image background = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/background.png");
+    private Image river = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/river.png");
+    private Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
+    private Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
 
 
     /*      IMAGE CONFIGURATIONS        */
@@ -36,10 +36,15 @@ public class App extends Application {
     private ImgPos imgPosBridge = new ImgPos("bridge");
     private ImgPos imgPosBotFor = new ImgPos("botForest");
     private ImgPos imgPosTopFor = new ImgPos("topForest");
+    private ImgDims idBG = new ImgDims(imgConfig.getIHBG(), imgConfig.getIWBG(), imgConfig.getRFS());
+    private ImgDims idPL = new ImgDims(imgConfig.getIHPL(), imgConfig.getIWPL(), imgConfig.getRFS());
+    private ImgDims idRV = new ImgDims(imgConfig.getIHRV(), imgConfig.getIWRV(), imgConfig.getRFS());
+    private ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
+    private ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
 
     private boolean fs = true;
 
-    private float stepSize = 5;
+    private double stepSize = 5;
     
     public static void main(String[] args) {
         launch();
@@ -55,21 +60,18 @@ public class App extends Application {
         //backgroundImage.setPreserveRatio(true); // false if strech
         backgroundImage.setFitHeight(imgConfig.getIHBG());
         backgroundImage.setFitWidth(imgConfig.getIWBG());
-        ImgDims idBG = new ImgDims(imgConfig.getIHBG(), imgConfig.getIWBG(), imgConfig.getRFS());
 
         /*      CREATE PLAYER       */
 
         ImageView playerImage = new ImageView(playerLeft); // initial orientation
         // idk why, but it breaks when init location is set directly
-        playerImage.relocate(imgConfig.getIWBG()/2 - imgConfig.getIWPL()/2, imgConfig.getIHBG()/2 - imgConfig.getIHPL()/2); 
-        ImgDims idPL = new ImgDims(imgConfig.getIHPL(), imgConfig.getIWPL(), imgConfig.getRFS());
+        playerImage.relocate(imgConfig.getIWBG()/2 - imgConfig.getIWPL()/2, imgConfig.getIHBG()/2 - imgConfig.getIHPL()/2);
 
         /*      CREATE RIVER        */
 
         ImageView riverImage = new ImageView(river);
         riverImage.setFitHeight(imgConfig.getIHRV());
         riverImage.setFitWidth(imgConfig.getIWRV());
-        ImgDims idRV = new ImgDims(imgConfig.getIHRV(), imgConfig.getIWRV(), imgConfig.getRFS());
 
         /*      CREATE BRIDGE       */
 
@@ -77,7 +79,6 @@ public class App extends Application {
         bridgeImage.setFitHeight(imgConfig.getIHBR());
         bridgeImage.setFitWidth(imgConfig.getIWBR());
         bridgeImage.relocate(imgPosBridge.getPosX(0), imgPosBridge.getPosY(0)); 
-        ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
 
         /*      CREATE TREES BELOW PLAYER   */
 
@@ -88,7 +89,6 @@ public class App extends Application {
             botTreeImage[i].setFitWidth(imgConfig.getIWTR());
             botTreeImage[i].relocate(imgPosBotFor.getPosX(i), imgPosBotFor.getPosY(i));
         }
-        ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
 
         /*      CREATE TREES ABOVE PLAYER   */
 
@@ -129,18 +129,18 @@ public class App extends Application {
             public void handle(KeyEvent event) {
                 switch(event.getCode()){
                 case W:
-                    playerImage.relocate(playerImage.getLayoutX(), playerImage.getLayoutY() - stepSize);
+                    go(playerImage, 'W', botTreeImage, topTreeImage);
                     break;
                 case S:
-                    playerImage.relocate(playerImage.getLayoutX(), playerImage.getLayoutY() + stepSize);
+                    go(playerImage, 'S', botTreeImage, topTreeImage);
                     break;
                 case A:
                     playerImage.setImage(playerLeft);
-                    playerImage.relocate(playerImage.getLayoutX() - stepSize, playerImage.getLayoutY());
+                    go(playerImage, 'A', botTreeImage, topTreeImage);
                     break;
                 case D:
                     playerImage.setImage(playerRight);
-                    playerImage.relocate(playerImage.getLayoutX() + stepSize, playerImage.getLayoutY());
+                    go(playerImage, 'D', botTreeImage, topTreeImage);
                     break;
                 case F:
                     if(fs) {
@@ -195,11 +195,11 @@ public class App extends Application {
         img.setLayoutY( (img.getLayoutY() + id.getFH()/2) / imgConfig.getRFS() - id.getIH()/2 );
     }
 
-    private float downScaler(float val) {
+    private double downScaler(double val) {
         return val / imgConfig.getRFS();
     }
 
-    private void downScaler(ImageView img[],ImgDims id) {
+    private void downScaler(ImageView img[], ImgDims id) {
         for(int i = 0; i < img.length; i++){
             img[i].setFitHeight(id.getIH());
             img[i].setFitWidth(id.getIW());
@@ -215,7 +215,7 @@ public class App extends Application {
         img.setLayoutY( imgConfig.getRFS() * (img.getLayoutY() + id.getIH()/2) - id.getFH()/2 );
     }
 
-    private float upScaler(float val) {
+    private double upScaler(double val) {
         return val * imgConfig.getRFS();
     }
 
@@ -227,4 +227,50 @@ public class App extends Application {
             img[i].setLayoutY( imgConfig.getRFS() * (img[i].getLayoutY() + id.getIH()/2) - id.getFH()/2 );
         }
     }
+
+    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF){
+        double posX = img.getLayoutX();
+        double posY = img.getLayoutY();
+        double newX = posX;
+        double newY = posY;
+
+        switch(dir){
+        case 'W':
+            newY = newY - stepSize;
+            break;
+        case 'S':
+            newY = newY + stepSize;
+            break;
+        case 'A':
+            newX = newX - stepSize;
+            break;
+        case 'D':
+            newX = newX + stepSize;
+            break;
+        default:
+            break;
+        }
+
+        double t1;
+        double t2;
+        
+        for(int i = 0; i < botF.length; i++){
+            t1 = ((botF[i].getLayoutX() + botF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
+            t2 = ((botF[i].getLayoutY() + botF[i].getFitHeight()) - (newY + img.getFitHeight()));
+            if(-botF[i].getFitWidth() < t1 && t1 < botF[i].getFitWidth() 
+            && 0.4*botF[i].getFitHeight() < t2 && t2 < 1.2*botF[i].getFitHeight()) {
+                return;
+            }
+        }
+        
+        for(int i = 0; i < topF.length; i++){
+            t1 = ((topF[i].getLayoutX() + topF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
+            t2 = ((topF[i].getLayoutY() + topF[i].getFitHeight()) - (newY + img.getFitHeight()));
+            if(-0.4*topF[i].getFitWidth() < t1 && t1 < topF[i].getFitWidth() 
+            && 0.1*topF[i].getFitHeight() < t2 && t2 < 0.7*topF[i].getFitHeight()) return;
+        }
+
+        img.relocate(newX, newY);
+    }
+    
 }
