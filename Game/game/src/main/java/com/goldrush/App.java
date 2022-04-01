@@ -29,6 +29,10 @@ public class App extends Application {
     private Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
     private Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
     private Image saloon = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/saloon.png");
+    private Image house = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/house.png");
+    private Image menu = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/menu.png");
+    private Image popUpS = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUpS.png");
+    private Image popUpH = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUpH.png");
 
 
     /*      IMAGE CONFIGURATIONS        */
@@ -37,29 +41,40 @@ public class App extends Application {
     private ImgPos imgPosBridge = new ImgPos("bridge");
     private ImgPos imgPosRiver = new ImgPos("river");
     private ImgPos imgPosSaloon = new ImgPos("saloon");
+    private ImgPos imgPosHouse = new ImgPos("house");
+    private ImgPos imgPosMenu = new ImgPos("menu");
     private ImgPos imgPosBotFor = new ImgPos("botForest");
     private ImgPos imgPosTopFor = new ImgPos("topForest");
     private ImgDims idBG = new ImgDims(imgConfig.getIHBG(), imgConfig.getIWBG(), imgConfig.getRFS());
+    private ImgDims idMN = new ImgDims(imgConfig.getIHMN(), imgConfig.getIWMN(), imgConfig.getRFS());
     private ImgDims idPL = new ImgDims(imgConfig.getIHPL(), imgConfig.getIWPL(), imgConfig.getRFS());
     private ImgDims idRV = new ImgDims(imgConfig.getIHRV(), imgConfig.getIWRV(), imgConfig.getRFS());
     private ImgDims idBR = new ImgDims(imgConfig.getIHBR(), imgConfig.getIWBR(), imgConfig.getRFS());
     private ImgDims idTR = new ImgDims(imgConfig.getIHTR(), imgConfig.getIWTR(), imgConfig.getRFS());
     private ImgDims idSL = new ImgDims(imgConfig.getIHSL(), imgConfig.getIWSL(), imgConfig.getRFS());
+    private ImgDims idHS = new ImgDims(imgConfig.getIHHS(), imgConfig.getIWHS(), imgConfig.getRFS());
+    private ImgDims idPU = new ImgDims(imgConfig.getIHPU(), imgConfig.getIWPU(), imgConfig.getRFS());
 
     private boolean fs = true; // non-fullscreen flag
-    private boolean fp = true; // non-popUp flag
+    private boolean fps = true; // non-popUpS flag
+    private boolean fph = true; // non-popUpH flag
+    private boolean fpw = true; // non-popUpH flag
+    private boolean fp = true; // non-popUpH flag
 
     private double stepSize = 5;
 
     /*      IMAGES      */
     private ImageView backgroundImage = new ImageView(background);
+    private ImageView menuImage = new ImageView(menu);
     private ImageView playerImage = new ImageView(playerLeft); // initial orientation
     private ImageView riverImage = new ImageView(river);
     private ImageView bridgeImage = new ImageView(bridge);
     private ImageView saloonImage = new ImageView(saloon);
+    private ImageView houseImage = new ImageView(house);
     private Pane layout = new Pane();
 
-    private ImageView popUpImage = new ImageView(saloon);
+    private ImageView popUpSImage = new ImageView(popUpS);
+    private ImageView popUpHImage = new ImageView(popUpH);
 
     
     public static void main(String[] args) {
@@ -75,6 +90,12 @@ public class App extends Application {
         //backgroundImage.setPreserveRatio(true); // false if strech
         backgroundImage.setFitHeight(imgConfig.getIHBG());
         backgroundImage.setFitWidth(imgConfig.getIWBG());
+
+        /*      CREATE MENU     */
+
+        menuImage.setFitHeight(imgConfig.getIHMN());
+        menuImage.setFitWidth(imgConfig.getIWMN());
+        menuImage.relocate(imgPosMenu.getPosX(0), imgPosMenu.getPosY(0)); 
 
         /*      CREATE PLAYER       */
 
@@ -121,6 +142,12 @@ public class App extends Application {
         saloonImage.setFitWidth(imgConfig.getIWSL());
         saloonImage.relocate(imgPosSaloon.getPosX(0), imgPosSaloon.getPosY(0)); 
 
+        /*      CREATE HOUSEE      */
+
+        houseImage.setFitHeight(imgConfig.getIHHS());
+        houseImage.setFitWidth(imgConfig.getIWHS());
+        houseImage.relocate(imgPosHouse.getPosX(0), imgPosHouse.getPosY(0)); 
+
         /*      CREATE LAYOUT       */
 
         layout.getChildren().add(backgroundImage);
@@ -130,10 +157,12 @@ public class App extends Application {
         layout.getChildren().add(saloonImage);
         layout.getChildren().add(riverImage);
         layout.getChildren().add(bridgeImage);
+        layout.getChildren().add(houseImage);
         layout.getChildren().add(playerImage);
         for(int i = 0; i < topTreeImage.length; i++) {
             layout.getChildren().add(topTreeImage[i]);
         }
+        layout.getChildren().add(menuImage);
         layout.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
         /*      CREATE THE SCENE        */
@@ -172,6 +201,10 @@ public class App extends Application {
                         upScaler(botTreeImage, idTR);
                         upScaler(topTreeImage, idTR);
                         upScaler(saloonImage, idSL);
+                        upScaler(houseImage, idHS);
+                        upScaler(menuImage, idMN);
+                        upScaler(popUpSImage, idPU);
+                        upScaler(popUpHImage, idPU);
                         stepSize = upScaler(stepSize);
                         primaryStage.setFullScreen(true);
                         fs = !fs;
@@ -184,6 +217,10 @@ public class App extends Application {
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
                         downScaler(saloonImage, idSL);
+                        downScaler(houseImage, idHS);
+                        downScaler(menuImage, idMN);
+                        downScaler(popUpSImage, idPU);
+                        downScaler(popUpHImage, idPU);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
@@ -198,13 +235,25 @@ public class App extends Application {
                         downScaler(botTreeImage, idTR);
                         downScaler(topTreeImage, idTR);
                         downScaler(saloonImage, idSL);
+                        downScaler(houseImage, idHS);
+                        downScaler(menuImage, idMN);
+                        downScaler(popUpSImage, idPU);
+                        downScaler(popUpHImage, idPU);
                         stepSize = downScaler(stepSize);
                         primaryStage.setFullScreen(false);
                         fs = !fs;
                     }
                 case K:
-                    layout.getChildren().remove(popUpImage);
-                    fp = true;
+                    if(!fps) {
+                        layout.getChildren().remove(popUpSImage);
+                        fps = true;
+                        fp = true;
+                    }
+                    else if(!fph) {
+                        layout.getChildren().remove(popUpHImage);
+                        fph = true;
+                        fp = true;
+                    }
                 default:
                     break;
                 }
@@ -214,9 +263,14 @@ public class App extends Application {
 
         /*      CREATE POP UP       */
 
-        popUpImage.setFitHeight(0.8*backgroundImage.getFitHeight());
-        popUpImage.setFitWidth(0.8*backgroundImage.getFitWidth());
-        popUpImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+        popUpSImage.setFitHeight(imgConfig.getIHPU());
+        popUpSImage.setFitWidth(imgConfig.getIWPU());
+        popUpSImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight()); 
+
+        popUpHImage.setFitHeight(imgConfig.getIHPU());
+        popUpHImage.setFitWidth(imgConfig.getIWPU());
+        popUpHImage.relocate(backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
             backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight()); 
         
     }
@@ -326,9 +380,20 @@ public class App extends Application {
         }
 
         /*      NO HITS WITH SALOON, EXCEPT WITH DOORS      */
-        if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight() + 3*stepSize)){
+        if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight())
+        && saloonImage.getLayoutX() < t1 && t1 < saloonImage.getLayoutX() + saloonImage.getFitWidth()){
             if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
                 drinking();
+            }
+            return;
+        }
+
+        /*      HOME HITS       */
+
+        if((houseImage.getLayoutX() - 3*stepSize < t1 && t1 < houseImage.getLayoutX() + houseImage.getFitWidth())
+        && houseImage.getLayoutY() < t2 && t2 < houseImage.getLayoutY() + houseImage.getFitHeight() + 3*stepSize){
+            if(houseImage.getLayoutY() + houseImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 && t2 < houseImage.getLayoutY() + houseImage.getFitHeight()){
+                enterHouse();
             }
             return;
         }
@@ -337,7 +402,14 @@ public class App extends Application {
     }
 
     private void drinking(){
-        layout.getChildren().add(popUpImage);
+        layout.getChildren().add(popUpSImage);
+        fps = false;
+        fp = false;
+    }
+
+    private void enterHouse(){
+        layout.getChildren().add(popUpHImage);
+        fph = false;
         fp = false;
     }
     

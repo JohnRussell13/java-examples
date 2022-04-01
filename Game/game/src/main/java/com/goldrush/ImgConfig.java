@@ -16,6 +16,12 @@ public class ImgConfig {
     private double initWidthBR;
     private double initHeightSL;
     private double initWidthSL;
+    private double initHeightHS;
+    private double initWidthHS;
+    private double initHeightMN;
+    private double initWidthMN;
+    private double initHeightPU;
+    private double initWidthPU;
 
     private double ratioFS;
     private double blackStripWidth;
@@ -43,7 +49,14 @@ public class ImgConfig {
             initWidthBR = Double.parseDouble(scanIn.nextLine());
             initHeightSL = Double.parseDouble(scanIn.nextLine());
             initWidthSL = Double.parseDouble(scanIn.nextLine());
+            initHeightHS = Double.parseDouble(scanIn.nextLine());
+            initWidthHS = Double.parseDouble(scanIn.nextLine());
+            initHeightMN = Double.parseDouble(scanIn.nextLine());
+            initWidthMN = Double.parseDouble(scanIn.nextLine());
             scanIn.close();
+
+            initHeightPU = 0.8*initHeightBG;
+            initWidthPU = 0.8*initWidthBG;
 
             ratioFS = fullHeightBG / initHeightBG;
             blackStripWidth = (maxWidth - ratioFS*initWidthBG)/2;
@@ -64,6 +77,13 @@ public class ImgConfig {
     public double getIWBR() {return initWidthBR;}
     public double getIHSL() {return initHeightSL;}
     public double getIWSL() {return initWidthSL;}
+    public double getIHHS() {return initHeightHS;}
+    public double getIWHS() {return initWidthHS;}
+    public double getIHMN() {return initHeightMN;}
+    public double getIWMN() {return initWidthMN;}
+
+    public double getIHPU() {return initHeightPU;}
+    public double getIWPU() {return initWidthPU;}
 
     public double getRFS() {return ratioFS;}
     public double getBSW() {return blackStripWidth;}
