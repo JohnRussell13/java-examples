@@ -64,6 +64,8 @@ public class App extends Application {
         /*      CREATE PLAYER       */
 
         ImageView playerImage = new ImageView(playerLeft); // initial orientation
+        playerImage.setFitHeight(imgConfig.getIHPL());
+        playerImage.setFitWidth(imgConfig.getIWPL());
         // idk why, but it breaks when init location is set directly
         playerImage.relocate(imgConfig.getIWBG()/2 - imgConfig.getIWPL()/2, imgConfig.getIHBG()/2 - imgConfig.getIHPL()/2);
 
@@ -129,18 +131,18 @@ public class App extends Application {
             public void handle(KeyEvent event) {
                 switch(event.getCode()){
                 case W:
-                    go(playerImage, 'W', botTreeImage, topTreeImage);
+                    go(playerImage, 'W', botTreeImage, topTreeImage, backgroundImage);
                     break;
                 case S:
-                    go(playerImage, 'S', botTreeImage, topTreeImage);
+                    go(playerImage, 'S', botTreeImage, topTreeImage, backgroundImage);
                     break;
                 case A:
                     playerImage.setImage(playerLeft);
-                    go(playerImage, 'A', botTreeImage, topTreeImage);
+                    go(playerImage, 'A', botTreeImage, topTreeImage, backgroundImage);
                     break;
                 case D:
                     playerImage.setImage(playerRight);
-                    go(playerImage, 'D', botTreeImage, topTreeImage);
+                    go(playerImage, 'D', botTreeImage, topTreeImage, backgroundImage);
                     break;
                 case F:
                     if(fs) {
@@ -228,7 +230,7 @@ public class App extends Application {
         }
     }
 
-    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF){
+    private void go(ImageView img, char dir, ImageView[] botF, ImageView[] topF, ImageView bkg){
         double posX = img.getLayoutX();
         double posY = img.getLayoutY();
         double newX = posX;
@@ -253,6 +255,8 @@ public class App extends Application {
 
         double t1;
         double t2;
+
+        /*      NO HITS WITH BOTTOM TREES       */
         
         for(int i = 0; i < botF.length; i++){
             t1 = ((botF[i].getLayoutX() + botF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
@@ -262,6 +266,8 @@ public class App extends Application {
                 return;
             }
         }
+
+        /*      NO HITS WITH TOP TREES      */
         
         for(int i = 0; i < topF.length; i++){
             t1 = ((topF[i].getLayoutX() + topF[i].getFitWidth()/2) - (newX + img.getFitWidth()/2));
@@ -269,6 +275,13 @@ public class App extends Application {
             if(-0.4*topF[i].getFitWidth() < t1 && t1 < topF[i].getFitWidth() 
             && 0.1*topF[i].getFitHeight() < t2 && t2 < 0.7*topF[i].getFitHeight()) return;
         }
+
+        /*      NO HITS WITH BORDERS     */
+
+        System.out.println(bkg.getLayoutX() + bkg.getFitWidth());
+        System.out.println(img.getFitWidth());
+        if(bkg.getLayoutX() > newX || newX + 1.1*img.getFitWidth() > bkg.getLayoutX() + bkg.getFitWidth() 
+        || bkg.getLayoutY() > newY || newY + 1.1*img.getFitHeight() > bkg.getLayoutY() + bkg.getFitHeight()) return;
 
         img.relocate(newX, newY);
     }
