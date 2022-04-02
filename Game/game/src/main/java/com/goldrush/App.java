@@ -136,6 +136,8 @@ public class App extends Application {
     private int week = 1;
     private int foodPrice = 0;
     private boolean cmpltAnim = false;
+    private boolean cmpltAnimB = false;
+    private boolean cmpltAnimC = false;
 
     private String location = "";
     
@@ -400,15 +402,22 @@ public class App extends Application {
             foodGoes();
             break;
         case 8:
+            cmpltAnimC = true;
             msg = "You worked hard this week and some tools are now destroyed.\n";
-            msg += "Press K to navigate";
-            fortyNiner.useTools();
-            fortyNiner.loseEndurance();
+            if(cmpltAnimB) {
+                msg += "Press K to navigate";
+                fpm = false;
+                fp = false;
+            }
+            else {
+                fpm = true;
+                fp = false;
+            }
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
-            fpm = false;
-            fp = false;
+            fortyNiner.useTools();
+            fortyNiner.loseEndurance();
             break;
         case 9:
             layout.getChildren().remove(popUpImage);
@@ -469,6 +478,7 @@ public class App extends Application {
     }
 
     private void foodGoes(){
+        cmpltAnimB = false;
         layout.getChildren().remove(popUpImage);
         layout.getChildren().remove(textPopUp);
         fpm = true;
@@ -477,6 +487,8 @@ public class App extends Application {
         fsf = false;
         faf = true;
         fad = false;
+
+        cmpltAnimC = false;
         sellerFoodImage.setImage(sellerFoodLeft);
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
     }
@@ -562,6 +574,21 @@ public class App extends Application {
     private void animAIR(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         countAI--;
         if(countAI < 0) {
+            cmpltAnimB = true;
+
+            if(cmpltAnimC){
+                String msg;
+                msg = "You worked hard this week and some tools are now destroyed.\n";
+                msg += "Press K to navigate";
+                textPopUp.setText(msg);
+                layout.getChildren().remove(popUpImage);
+                layout.getChildren().remove(textPopUp);
+                layout.getChildren().add(popUpImage);
+                layout.getChildren().add(textPopUp);
+                fpm = false;
+                fp = false;
+            }
+
             faf = false;
             return;
         }
