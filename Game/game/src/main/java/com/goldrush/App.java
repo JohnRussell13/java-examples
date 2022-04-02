@@ -136,7 +136,6 @@ public class App extends Application {
     private double blur = 2;
 
     private int gp_fsm = 0;
-    private int eg_fsm = 0;
     private GoldRush game = new GoldRush();
     private int week = 1;
     private int foodPrice = 0;
@@ -144,6 +143,7 @@ public class App extends Application {
     private boolean cmpltAnim = false;
     private boolean cmpltAnimB = false;
     private boolean cmpltAnimC = false;
+    private boolean cmpltAnimD = false;
 
     private String location = "";
 
@@ -263,8 +263,8 @@ public class App extends Application {
                         msg += "No. of new cradles ";
                         msg += cradlePrice;
                         msg += ".";
-                        if(cmpltAnim) {
-                            msg += "\nPress K to navigate";
+                        if(cmpltAnim || cmpltAnimD) {
+                            msg += "\n\nPress K to navigate";
                             fpm = false;
                         }
                         textPopUp.setText(msg);
@@ -277,8 +277,8 @@ public class App extends Application {
                         msg += "No. of new cradles ";
                         msg += cradlePrice;
                         msg += ".";
-                        if(cmpltAnim) {
-                            msg += "\nPress K to navigate";
+                        if(cmpltAnim || cmpltAnimD) {
+                            msg += "\n\nPress K to navigate";
                             fpm = false;
                         }
                         textPopUp.setText(msg);
@@ -375,8 +375,8 @@ public class App extends Application {
         case 0:
             makeFortyNiner();
             msg = "GOLD RUSH\n";
-            msg += "In this game, you are an ol' timer - 49er!\n";
-            msg += "Press K to navigate";
+            msg += "In this game, you are an ol' timer - 49er!";
+            msg += "\n\nPress K to navigate";
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -384,13 +384,13 @@ public class App extends Application {
             fp = false;
             break;
         case 1:
-            msg = "Every weekend you can go to the saloon, rast at home or fix the broken sluice.\n";
-            msg += "Press K to navigate";
+            msg = "Every weekend you can go to the saloon, rest at home or fix the broken sluice.";
+            msg += "\n\nPress K to navigate";
             textPopUp.setText(msg);
             break;
         case 2:
-            msg = "You will also have to buy food, but you may buy cradles as well.\n";
-            msg += "Press K to navigate";
+            msg = "You will also have to buy food, but you may buy cradles as well.";
+            msg += "\n\nPress K to navigate";
             textPopUp.setText(msg);
             break;
         case 3:
@@ -403,13 +403,16 @@ public class App extends Application {
             switch(location) {
                 case "house":
                     msg = "Even God rested on Sunday!";
+                    msg+= "\n\nPress K to navigate";
                     break;
                 case "work":
                     msg = "Work is priority number one!";
+                    msg+= "\n\nPress K to navigate";
                     break;
                 case "saloon":
                     msg = "Enjoy your night's out!\n";
-                    msg += "Have one for me!";
+                    msg+= "Have one for me!";
+                    msg+= "\n\nPress K to navigate";
                     break;
                 default:
                     msg = "";
@@ -437,9 +440,9 @@ public class App extends Application {
             break;
         case 8:
             cmpltAnimC = true;
-            msg = "You can now buy some more of those sweet cradles.\n";
+            msg = "You can now buy some more of those sweet cradles.";
             if(cmpltAnimB) {
-                msg += "Press K to navigate";
+                msg += "\n\nPress K to navigate";
                 fpm = false;
                 fp = false;
             }
@@ -466,9 +469,9 @@ public class App extends Application {
             break;
         case 12:
             cmpltAnimC = true;
-            msg = "You worked hard this week and some tools are now destroyed.\n";
+            msg = "You worked hard this week and some tools are now destroyed.";
             if(cmpltAnimB) {
-                msg += "Press K to navigate";
+                msg += "\n\nPress K to navigate";
                 fpm = false;
                 fp = false;
             }
@@ -488,10 +491,8 @@ public class App extends Application {
             fpm = true;
             fp = true;
             week++;
-            msg = "New week!\n";
-            msg += "Press K to navigate";
-            game.getFortyNiner().useTools();
-            game.getFortyNiner().loseEndurance();
+            msg = "It's weekend again!";
+            msg += "\n\nPress K to navigate";
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -531,6 +532,7 @@ public class App extends Application {
     }
 
     private void foodComes(){
+        fsf = true;
         faf = true;
         countAI = 0;
         fad = true;
@@ -540,9 +542,10 @@ public class App extends Application {
 
         msg = "Food for this week will cost you $";
         msg += foodPrice;
-        msg += ".\n";
-        msg += "Press K to navigate";
+        msg += ".";
+        msg += "\n\nPress K to navigate";
 
+        cmpltAnimD = false;
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
     }
 
@@ -554,7 +557,7 @@ public class App extends Application {
         msg+= foodPrice;
         msg+= ".";
         if(cmpltAnim) {
-            msg += "\nPress K to navigate";
+            msg += "\n\nPress K to navigate";
             fpm = false;
         }
         layout.getChildren().add(popUpImage);
@@ -573,8 +576,8 @@ public class App extends Application {
         faf = true;
         fad = false;
 
-        msg = "You worked hard this week and some tools are now destroyed.\n";
-        msg += "Press K to navigate";
+        msg = "You worked hard this week and some tools are now destroyed.";
+        msg += "\n\nPress K to navigate";
 
         cmpltAnimC = false;
         sellerFoodImage.setImage(sellerFoodLeft);
@@ -582,6 +585,7 @@ public class App extends Application {
     }
 
     private void cradleComes(){
+        fsc = true;
         fac = true;
         countAI = 0;
         fad = true;
@@ -592,11 +596,12 @@ public class App extends Application {
         msg = "How many cradles do you want?\n";
         msg += "No. of new cradles ";
         msg += cradlePrice;
-        msg += ".\n";
-        msg += "Press K to navigate";
+        msg += ".";
+        msg += "\n\nPress K to navigate";
 
         fbc = true;
 
+        cmpltAnimD = false;
         animAIF("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
     }
 
@@ -608,7 +613,7 @@ public class App extends Application {
         msg += cradlePrice;
         msg += ".";
         if(cmpltAnim) {
-            msg += "\nPress K to navigate";
+            msg += "\n\nPress K to navigate";
             fpm = false;
         }
         layout.getChildren().add(popUpImage);
@@ -645,8 +650,8 @@ public class App extends Application {
 
         cradlePrice = 0;
 
-        msg = "You worked hard this week and some tools are now destroyed.\n";
-        msg += "Press K to navigate";
+        msg = "You worked hard this week and some tools are now destroyed.";
+        msg += "\n\nPress K to navigate";
 
         cmpltAnimC = false;
         sellerCradleImage.setImage(sellerCradleLeft);
@@ -656,25 +661,21 @@ public class App extends Application {
     private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         int localCAI = countAI;
 
-        if(!fsg || localCAI >= animPoints.getCount()){
+        if(!fsg) {
             switch(name){
             case "sellerFood":
-                faf = false;
-                fsf = true;
+                fsf = false;
             break;
             case "sellerCradle":
-                fac = false;
-                fsc = true;
+                fsc = false;
             break;
             default:
                 break;
             }
-        }
-
-        if(!fsg) {
+            cmpltAnimD = true;
             layout.getChildren().remove(textPopUp);
             msg = textPopUp.getText();
-            msg += "\nPress K to navigate";
+            msg += "\n\nPress K to navigate";
             textPopUp.setText(msg);
             layout.getChildren().add(textPopUp);
 
@@ -746,11 +747,11 @@ public class App extends Application {
             if(cmpltAnimC){
                 layout.getChildren().remove(textPopUp);
                 msg = textPopUp.getText();
-                msg += "\nPress K to navigate";
+                msg += "\n\nPress K to navigate";
                 textPopUp.setText(msg);
                 layout.getChildren().add(textPopUp);
 
-                fpm = false;
+                fpm = false;    
                 fp = false;
             }
 
@@ -934,7 +935,6 @@ public class App extends Application {
         }
     }
 
-
     private void go(char dir, ImageView[] botT, ImageView[] topT){
         double posX = playerImage.getLayoutX();
         double posY = playerImage.getLayoutY();
@@ -1069,7 +1069,7 @@ public class App extends Application {
 
     private void enterSaloon(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("Welcome to the Saloon!");
+        textPopUp.setText("Welcome to the Saloon!\n\nPress K to navigate");
         layout.getChildren().add(textPopUp);
         fps = false;
         fp = false;
@@ -1084,7 +1084,7 @@ public class App extends Application {
 
     private void enterHouse(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("Welcome Home!");
+        textPopUp.setText("Welcome Home!\n\nPress K to navigate");
         layout.getChildren().add(textPopUp);
         fph = false;
         fp = false;
@@ -1100,7 +1100,7 @@ public class App extends Application {
 
     private void enterWork(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("This week might be the one!");
+        textPopUp.setText("This time next year, you'll be a millionaire!\n\nPress K to navigate");
         layout.getChildren().add(textPopUp);
         fpw = false;
         fp = false;
