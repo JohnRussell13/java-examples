@@ -26,6 +26,8 @@ public class ImgConfig {
     private double initWidthSF;
     private double initHeightSC;
     private double initWidthSC;
+    private double initHeightWR;
+    private double initWidthWR;
 
     private double ratioFS;
     private double blackStripWidth;
@@ -61,6 +63,8 @@ public class ImgConfig {
             initWidthSF = Double.parseDouble(scanIn.nextLine());
             initHeightSC = Double.parseDouble(scanIn.nextLine());
             initWidthSC = Double.parseDouble(scanIn.nextLine());
+            initHeightWR = Double.parseDouble(scanIn.nextLine());
+            initWidthWR = Double.parseDouble(scanIn.nextLine());
             scanIn.close();
 
             initHeightPU = 0.8*initHeightBG;
@@ -97,6 +101,8 @@ public class ImgConfig {
             return initHeightSF;
         case "sellerCradle":
             return initHeightSC;
+        case "work":
+            return initHeightWR;
         default:
             return 0;
         }
@@ -126,30 +132,12 @@ public class ImgConfig {
             return initWidthSF;
         case "sellerCradle":
             return initWidthSC;
+        case "work":
+            return initWidthWR;
         default:
             return 0;
         }
     }
-
-    // public double getIHBG() {return initHeightBG;}
-    // public double getIWBG() {return initWidthBG;}
-    // public double getIHPL() {return initHeightPL;}
-    // public double getIWPL() {return initWidthPL;}
-    // public double getIHRV() {return initHeightRV;}
-    // public double getIWRV() {return initWidthRV;}
-    // public double getIHTR() {return initHeightTR;}
-    // public double getIWTR() {return initWidthTR;}
-    // public double getIHBR() {return initHeightBR;}
-    // public double getIWBR() {return initWidthBR;}
-    // public double getIHSL() {return initHeightSL;}
-    // public double getIWSL() {return initWidthSL;}
-    // public double getIHHS() {return initHeightHS;}
-    // public double getIWHS() {return initWidthHS;}
-    // public double getIHMN() {return initHeightMN;}
-    // public double getIWMN() {return initWidthMN;}
-
-    // public double getIHPU() {return initHeightPU;}
-    // public double getIWPU() {return initWidthPU;}
 
     public double getRFS() {return ratioFS;}
     public double getBSW() {return blackStripWidth;}

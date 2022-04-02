@@ -1,5 +1,5 @@
-Week no. 4
-49er endurance: 72%
-49er money: $639
-Sluice durability: 11%
+Week no. 19
+49er endurance: 0%
+49er money: $994
+Sluice durability: 0%
 Cradle durability: 100%

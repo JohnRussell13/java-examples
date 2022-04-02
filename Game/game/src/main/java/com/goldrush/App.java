@@ -1,16 +1,8 @@
 package com.goldrush;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import javafx.animation.PathTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
@@ -19,9 +11,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontSmoothingType;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.Pane;
@@ -51,6 +40,7 @@ public class App extends Application {
     private Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
     private Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
     private Image saloon = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/saloon.png");
+    private Image work = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/work.png");
     private Image house = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/house.png");
     private Image menu = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/menu.png");
     private Image popUp = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUp.png");
@@ -64,6 +54,7 @@ public class App extends Application {
     private ImgPos imgPosBridge = new ImgPos("bridge");
     private ImgPos imgPosRiver = new ImgPos("river");
     private ImgPos imgPosSaloon = new ImgPos("saloon");
+    private ImgPos imgPosWork = new ImgPos("work");
     private ImgPos imgPosHouse = new ImgPos("house");
     private ImgPos imgPosMenu = new ImgPos("menu");
     private ImgPos imgPosBotFor = new ImgPos("botForest");
@@ -79,6 +70,7 @@ public class App extends Application {
     private ImgDims idBR = new ImgDims(imgConfig.getInitialHeight("bridge"), imgConfig.getInitialWidth("bridge"), imgConfig.getRFS());
     private ImgDims idTR = new ImgDims(imgConfig.getInitialHeight("tree"), imgConfig.getInitialWidth("tree"), imgConfig.getRFS());
     private ImgDims idSL = new ImgDims(imgConfig.getInitialHeight("saloon"), imgConfig.getInitialWidth("saloon"), imgConfig.getRFS());
+    private ImgDims idWR = new ImgDims(imgConfig.getInitialHeight("work"), imgConfig.getInitialWidth("work"), imgConfig.getRFS());
     private ImgDims idHS = new ImgDims(imgConfig.getInitialHeight("house"), imgConfig.getInitialWidth("house"), imgConfig.getRFS());
     private ImgDims idPU = new ImgDims(imgConfig.getInitialHeight("popUp"), imgConfig.getInitialWidth("popUp"), imgConfig.getRFS());
 
@@ -95,13 +87,14 @@ public class App extends Application {
     private boolean fpm = false; // non-popUpM flag
     private boolean faf = false; // seller flag
     private boolean fac = false; // seller flag
-    private boolean fnf = false; // near seller flag
-    private boolean fnc = false; // near seller flag
+    // private boolean fnf = false; // near seller flag
+    // private boolean fnc = false; // near seller flag
     private boolean fsf = false; // selling seller flag
     private boolean fsc = false; // selling seller flag
     private boolean fsg = false; // selling seller flag
     private boolean fad = true; // AnimPoint direction flag
     private boolean fbc = false; // AnimPoint direction flag
+    private boolean feg = false; // EndGame read from keyboard flag
 
     private int countAI = -1;
 
@@ -115,6 +108,7 @@ public class App extends Application {
     private ImageView riverImage = new ImageView(river);
     private ImageView bridgeImage = new ImageView(bridge);
     private ImageView saloonImage = new ImageView(saloon);
+    private ImageView workImage = new ImageView(work);
     private ImageView houseImage = new ImageView(house);
     private Pane layout = new Pane();
 
@@ -142,7 +136,7 @@ public class App extends Application {
     private double blur = 2;
 
     private int gp_fsm = 0;
-    // private FortyNiner fortyNiner;
+    private int eg_fsm = 0;
     private GoldRush game = new GoldRush();
     private int week = 1;
     private int foodPrice = 0;
@@ -154,8 +148,6 @@ public class App extends Application {
     private String location = "";
 
     private String msg = "";
-
-    private File savedGame = new File("GoldRushSaved.txt");
 
     public static void main(String[] args) {
         launch();
@@ -177,6 +169,7 @@ public class App extends Application {
         imgSet(riverImage, imgPosRiver, "river");
         imgSet(bridgeImage, imgPosBridge, "bridge");
         imgSet(saloonImage, imgPosSaloon, "saloon");
+        imgSet(workImage, imgPosWork, "work");
         imgSet(houseImage, imgPosHouse, "house");
 
         sellerFoodImage.setFitHeight(imgConfig.getInitialHeight("sellerFood"));
@@ -226,6 +219,7 @@ public class App extends Application {
         layout.getChildren().add(sellerFoodImage);
         layout.getChildren().add(sellerCradleImage);
         layout.getChildren().add(playerImage);
+        layout.getChildren().add(workImage);
         for(int i = 0; i < topTreeImage.length; i++) {
             layout.getChildren().add(topTreeImage[i]);
         }
@@ -299,6 +293,7 @@ public class App extends Application {
                     scaler(botTreeImage, idTR);
                     scaler(topTreeImage, idTR);
                     scaler(saloonImage, idSL);
+                    scaler(workImage, idWR);
                     scaler(houseImage, idHS);
                     scaler(menuImage, idMN);
                     scaler(popUpImage, idPU);
@@ -328,12 +323,12 @@ public class App extends Application {
                     }
                     else if(!fph) {
                         exitHouse();
-                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 12){ // TESTING
+                        if(gp_fsm == 4 || gp_fsm == 8){
                             location = "house";
                             gameplay();
                         }
                     }
-                    else if(!fph) {
+                    else if(!fpw) {
                         exitWork();
                         if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 12){
                             location = "work";
@@ -346,6 +341,7 @@ public class App extends Application {
                     break;
                 case Q:
                     game.saveGame(week);
+                    Platform.exit();
                     break;
                 default:
                     break;
@@ -373,93 +369,6 @@ public class App extends Application {
 
         gameplay();
     }
-
-
-    // public void saveGame(int week) {
-    //     try {
-    //         FileOutputStream fos = new FileOutputStream(savedGame);
-    //         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-
-    //         bw.write("Week no. " + week);
-    //         bw.newLine();
-
-    //         bw.write("49er endurance: " + fortyNiner.getEndurance() + "%");
-    //         bw.newLine();
-
-    //         bw.write("49er money: $" + fortyNiner.getMoney());
-    //         bw.newLine();
-
-    //         ArrayList<Tool> tools = fortyNiner.getTools();
-    //         Tool sluice = (Tool) tools.get(1);
-
-    //         bw.write("Sluice durability: " + sluice.getDurability() + "%");
-    //         bw.newLine();
-
-    //         for(int i = 2; i < tools.size(); i++){
-    //             Tool cradle = (Tool) tools.get(i);
-
-    //             bw.write("Cradle durability: " + cradle.getDurability() + "%");
-    //             bw.newLine();
-    //         }
-
-    //         bw.close();
-
-    //     } catch (FileNotFoundException e){
-    //         // File was not found
-    //         e.printStackTrace();
-    //     } catch (IOException e) {
-    //         // Problem when writing to the file
-    //         e.printStackTrace();
-    //     }
-    // }
-
-    // public void loadGame() {
-    //     int endurance = 0;
-    //     int money = 0;
-    //     ArrayList<Tool> tools = new ArrayList<>();
-
-    //     try {
-    //         Scanner scanIn = new Scanner(savedGame);
-    //         String data;
-    //         int durability;
-    //         String regex = "[^\\d]+";
-            
-    //         data = scanIn.nextLine();
-    //         week = Integer.parseInt(data.split(regex)[1]);
-
-    //         data = scanIn.nextLine();
-    //         endurance = Integer.parseInt(data.split(regex)[1]);
-
-    //         data = scanIn.nextLine();
-    //         money = Integer.parseInt(data.split(regex)[1]);
-
-    //         data = scanIn.nextLine();
-    //         durability = Integer.parseInt(data.split(regex)[1]);
-
-    //         Pan pan = new Pan();
-    //         tools.add(pan);
-    //         Sluice sluice = new Sluice(durability);
-    //         tools.add(sluice);
-
-    //         while(scanIn.hasNextLine()) {
-    //             data = scanIn.nextLine();
-    //             durability = Integer.parseInt(data.split(regex)[1]);
-
-    //             Cradle cradle = new Cradle(durability);
-    //             tools.add(cradle);
-    //         }
-
-    //         System.out.println(endurance);
-    //         System.out.println(money);
-    //         System.out.println(tools);
-    //         fortyNiner = new FortyNiner(endurance, money, tools);
-    //         scanIn.close();
-
-    //         System.out.println("Game loaded.");
-    //     } catch (FileNotFoundException e){
-    //         System.out.println("Starting new game.");
-    //     }
-    // }
 
     private void gameplay(){
         switch(gp_fsm){
@@ -528,7 +437,7 @@ public class App extends Application {
             break;
         case 8:
             cmpltAnimC = true;
-            msg = "You ca now buy some more of those sweet cradles.\n";
+            msg = "You can now buy some more of those sweet cradles.\n";
             if(cmpltAnimB) {
                 msg += "Press K to navigate";
                 fpm = false;
@@ -588,6 +497,10 @@ public class App extends Application {
             layout.getChildren().add(textPopUp);
             fpm = false;
             fp = false;
+
+            if(week == 20) {
+                endgame();
+            }
             break;
         default:
             return;
@@ -597,6 +510,19 @@ public class App extends Application {
         if(gp_fsm >= 14){
             gp_fsm = 3;
         }
+    }
+
+    private void endgame(){
+        layout.getChildren().remove(popUpImage);
+        layout.getChildren().remove(textPopUp);
+        msg = "Congratulations!\n";
+        msg += "You WON!\n";
+        msg += "You survived 20 weeks in the Wild West!\n";
+        msg += "Press Q to leave or\n";
+        msg += "press K to continue..."; // not sure why, but K deals with it without custom flag
+        textPopUp.setText(msg);
+        layout.getChildren().add(popUpImage);
+        layout.getChildren().add(textPopUp);
     }
 
     private void makeFortyNiner(){
@@ -882,49 +808,6 @@ public class App extends Application {
         img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
     }
 
-    private void scalerAI(ImageView img, ImgDims id, boolean move, PathTransition pathTransition, String name) {
-
-        if(fs){
-            img.setFitHeight(id.getFH());
-            img.setFitWidth(id.getFW());
-        }
-        else{
-            img.setFitHeight(id.getIH());
-            img.setFitWidth(id.getIW());
-        }
-
-        img.setLayoutX( posMapNoBSW(img.getLayoutX(), id) );
-        img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
-        
-        img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
-        img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
-
-        if(move){
-            pathTransition.stop();
-
-            double destX = 0;
-            double destY = 0;
-
-            switch(name){
-            case "sellerFood":
-                destX = destXFood;
-                destY = destYFood;
-                break;
-            case "sellerCradle":
-                destX = destXCradle;
-                destY = destYCradle;
-                break;
-            default:
-                break;
-            }
-
-            destX = posMap(destX, fs, 'x');
-            destY = posMap(destY, fs, 'y');
-
-            animAI(name, destX, destY);
-        }
-    }
-
     private void scalerAIAP(ImageView img, ImgDims id, boolean move, PathTransition pathTransition, String name, AnimPoints animPoints) {
 
         if(fs){
@@ -1106,6 +989,13 @@ public class App extends Application {
             return;
         }
 
+        /*      ALLOWED HITS WITH WORK, BUT ENTER WORKPLACE     */
+
+        if((workImage.getLayoutY() < t2 && t2 < workImage.getLayoutY() + workImage.getFitHeight())
+        && workImage.getLayoutX() < t1 && t1 < workImage.getLayoutX() + workImage.getFitWidth()){
+            enterWork();
+        }
+
         /*      HOME HITS       */
 
         if((houseImage.getLayoutX() - 3*stepSize < t1 && t1 < houseImage.getLayoutX() + houseImage.getFitWidth() + 3*stepSize)
@@ -1158,7 +1048,7 @@ public class App extends Application {
 
     private void enterSaloon(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("WELCOME TO THE SALOON!");
+        textPopUp.setText("Welcome to the Saloon!");
         layout.getChildren().add(textPopUp);
         fps = false;
         fp = false;
@@ -1173,7 +1063,7 @@ public class App extends Application {
 
     private void enterHouse(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("WELCOME HOME!");
+        textPopUp.setText("Welcome Home!");
         layout.getChildren().add(textPopUp);
         fph = false;
         fp = false;
@@ -1189,7 +1079,7 @@ public class App extends Application {
 
     private void enterWork(){
         layout.getChildren().add(popUpImage);
-        textPopUp.setText("THIS WEEK MIGHT BE THE ONE!");
+        textPopUp.setText("This week might be the one!");
         layout.getChildren().add(textPopUp);
         fpw = false;
         fp = false;
@@ -1352,5 +1242,49 @@ public class App extends Application {
     //   }
 
     // delay(2000, () -> faf = false);
+
+    // private void scalerAI(ImageView img, ImgDims id, boolean move, PathTransition pathTransition, String name) {
+
+    //     if(fs){
+    //         img.setFitHeight(id.getFH());
+    //         img.setFitWidth(id.getFW());
+    //     }
+    //     else{
+    //         img.setFitHeight(id.getIH());
+    //         img.setFitWidth(id.getIW());
+    //     }
+
+    //     img.setLayoutX( posMapNoBSW(img.getLayoutX(), id) );
+    //     img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
+        
+    //     img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
+    //     img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
+
+    //     if(move){
+    //         pathTransition.stop();
+
+    //         double destX = 0;
+    //         double destY = 0;
+
+    //         switch(name){
+    //         case "sellerFood":
+    //             destX = destXFood;
+    //             destY = destYFood;
+    //             break;
+    //         case "sellerCradle":
+    //             destX = destXCradle;
+    //             destY = destYCradle;
+    //             break;
+    //         default:
+    //             break;
+    //         }
+
+    //         destX = posMap(destX, fs, 'x');
+    //         destY = posMap(destY, fs, 'y');
+
+    //         animAI(name, destX, destY);
+    //     }
+    // }
+
     
 }
