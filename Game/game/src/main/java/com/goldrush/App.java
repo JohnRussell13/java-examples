@@ -135,6 +135,7 @@ public class App extends Application {
     private FortyNiner fortyNiner;
     private int week = 1;
     private int foodPrice = 0;
+    private boolean cmpltAnim = false;
 
     private String location = "";
     
@@ -339,7 +340,7 @@ public class App extends Application {
             makeFortyNiner();
             msg = "GOLD RUSH\n";
             msg += "In this game, you are an ol' timer - 49er!\n";
-            msg += "Press K to navigate\n";
+            msg += "Press K to navigate";
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -348,12 +349,12 @@ public class App extends Application {
             break;
         case 1:
             msg = "Every weekend you can go to the saloon, rast at home or fix the broken sluice.\n";
-            msg += "Press K to navigate\n";
+            msg += "Press K to navigate";
             textPopUp.setText(msg);
             break;
         case 2:
             msg = "You will also have to buy food, but you may buy cradles as well.\n";
-            msg += "Press K to navigate\n";
+            msg += "Press K to navigate";
             textPopUp.setText(msg);
             break;
         case 3:
@@ -400,7 +401,7 @@ public class App extends Application {
             break;
         case 8:
             msg = "You worked hard this week and some tools are now destroyed.\n";
-            msg += "Press K to navigate\n";
+            msg += "Press K to navigate";
             fortyNiner.useTools();
             fortyNiner.loseEndurance();
             textPopUp.setText(msg);
@@ -415,12 +416,24 @@ public class App extends Application {
             fpm = true;
             fp = true;
             week++;
+            msg = "New week!\n";
+            msg += "Press K to navigate";
+            fortyNiner.useTools();
+            fortyNiner.loseEndurance();
+            textPopUp.setText(msg);
+            layout.getChildren().add(popUpImage);
+            layout.getChildren().add(textPopUp);
+            fpm = false;
+            fp = false;
             break;
         default:
             return;
         }
         menuDisplay();
         gp_fsm++;
+        if(gp_fsm >= 10){
+            gp_fsm = 3;
+        }
     }
 
     private void makeFortyNiner(){
@@ -432,6 +445,8 @@ public class App extends Application {
         countAI = 0;
         fad = true;
         fsg = true;
+        cmpltAnim = false;
+        sellerFoodImage.setImage(sellerFoodRight);
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
         fsf = true;        
     }
@@ -444,6 +459,10 @@ public class App extends Application {
         msg+= "Food for this week will cost you $";
         msg+= foodPrice;
         msg+= ".";
+        if(cmpltAnim) {
+            msg += "\nPress K to navigate";
+            fpm = false;
+        }
         layout.getChildren().add(popUpImage);
         textPopUp.setText(msg);
         layout.getChildren().add(textPopUp);
@@ -459,22 +478,19 @@ public class App extends Application {
         faf = true;
         fad = false;
         sellerFoodImage.setImage(sellerFoodLeft);
-
-        // countAI = animPointsSellerFood.getCount();
-
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
     }
 
     private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         int localCAI = countAI;
-        if(localCAI >= animPoints.getCount() || !fsg) {
 
+        if(!fsg) {
             String msg;
             msg = "Hi!\n";
             msg+= "Food for this week will cost you $";
             msg+= foodPrice;
             msg+= ".\n";
-            msg += "Press K to navigate\n";
+            msg += "Press K to navigate";
 
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
@@ -482,6 +498,13 @@ public class App extends Application {
             textPopUp.setText(msg);
             layout.getChildren().add(textPopUp);
 
+            fpm = false;
+            faf = false;
+            return;
+        }
+
+        if(localCAI >= animPoints.getCount()) {
+            cmpltAnim = true;
             fpm = false;
             faf = false;
             return;
