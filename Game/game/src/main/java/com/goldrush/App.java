@@ -142,7 +142,8 @@ public class App extends Application {
     private double blur = 2;
 
     private int gp_fsm = 0;
-    private FortyNiner fortyNiner;
+    // private FortyNiner fortyNiner;
+    private GoldRush game = new GoldRush();
     private int week = 1;
     private int foodPrice = 0;
     private int cradlePrice = 0;
@@ -344,7 +345,7 @@ public class App extends Application {
                     }
                     break;
                 case Q:
-                    saveGame(week);
+                    game.saveGame(week);
                     break;
                 default:
                     break;
@@ -370,104 +371,95 @@ public class App extends Application {
 
         /*          START GAMEPLAY          */
 
-
-
-        
-        loadGame();
-        
-        if(fortyNiner == null) {
-            fortyNiner = new FortyNiner();
-        }
-
         gameplay();
     }
 
 
-    public void saveGame(int week) {
-        try {
-            FileOutputStream fos = new FileOutputStream(savedGame);
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+    // public void saveGame(int week) {
+    //     try {
+    //         FileOutputStream fos = new FileOutputStream(savedGame);
+    //         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
-            bw.write("Week no. " + week);
-            bw.newLine();
+    //         bw.write("Week no. " + week);
+    //         bw.newLine();
 
-            bw.write("49er endurance: " + fortyNiner.getEndurance() + "%");
-            bw.newLine();
+    //         bw.write("49er endurance: " + fortyNiner.getEndurance() + "%");
+    //         bw.newLine();
 
-            bw.write("49er money: $" + fortyNiner.getMoney());
-            bw.newLine();
+    //         bw.write("49er money: $" + fortyNiner.getMoney());
+    //         bw.newLine();
 
-            ArrayList<Tool> tools = fortyNiner.getTools();
-            Tool sluice = (Tool) tools.get(1);
+    //         ArrayList<Tool> tools = fortyNiner.getTools();
+    //         Tool sluice = (Tool) tools.get(1);
 
-            bw.write("Sluice durability: " + sluice.getDurability() + "%");
-            bw.newLine();
+    //         bw.write("Sluice durability: " + sluice.getDurability() + "%");
+    //         bw.newLine();
 
-            for(int i = 2; i < tools.size(); i++){
-                Tool cradle = (Tool) tools.get(i);
+    //         for(int i = 2; i < tools.size(); i++){
+    //             Tool cradle = (Tool) tools.get(i);
 
-                bw.write("Cradle durability: " + cradle.getDurability() + "%");
-                bw.newLine();
-            }
+    //             bw.write("Cradle durability: " + cradle.getDurability() + "%");
+    //             bw.newLine();
+    //         }
 
-            bw.close();
+    //         bw.close();
 
-        } catch (FileNotFoundException e){
-            // File was not found
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Problem when writing to the file
-            e.printStackTrace();
-        }
-    }
+    //     } catch (FileNotFoundException e){
+    //         // File was not found
+    //         e.printStackTrace();
+    //     } catch (IOException e) {
+    //         // Problem when writing to the file
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    public void loadGame() {
-        int endurance = 0;
-        int money = 0;
-        ArrayList<Tool> tools = new ArrayList<>();
+    // public void loadGame() {
+    //     int endurance = 0;
+    //     int money = 0;
+    //     ArrayList<Tool> tools = new ArrayList<>();
 
-        try {
-            Scanner scanIn = new Scanner(savedGame);
-            String data;
-            int durability;
-            String regex = "[^\\d]+";
+    //     try {
+    //         Scanner scanIn = new Scanner(savedGame);
+    //         String data;
+    //         int durability;
+    //         String regex = "[^\\d]+";
             
-            data = scanIn.nextLine();
-            week = Integer.parseInt(data.split(regex)[1]);
+    //         data = scanIn.nextLine();
+    //         week = Integer.parseInt(data.split(regex)[1]);
 
-            data = scanIn.nextLine();
-            endurance = Integer.parseInt(data.split(regex)[1]);
+    //         data = scanIn.nextLine();
+    //         endurance = Integer.parseInt(data.split(regex)[1]);
 
-            data = scanIn.nextLine();
-            money = Integer.parseInt(data.split(regex)[1]);
+    //         data = scanIn.nextLine();
+    //         money = Integer.parseInt(data.split(regex)[1]);
 
-            data = scanIn.nextLine();
-            durability = Integer.parseInt(data.split(regex)[1]);
+    //         data = scanIn.nextLine();
+    //         durability = Integer.parseInt(data.split(regex)[1]);
 
-            Pan pan = new Pan();
-            tools.add(pan);
-            Sluice sluice = new Sluice(durability);
-            tools.add(sluice);
+    //         Pan pan = new Pan();
+    //         tools.add(pan);
+    //         Sluice sluice = new Sluice(durability);
+    //         tools.add(sluice);
 
-            while(scanIn.hasNextLine()) {
-                data = scanIn.nextLine();
-                durability = Integer.parseInt(data.split(regex)[1]);
+    //         while(scanIn.hasNextLine()) {
+    //             data = scanIn.nextLine();
+    //             durability = Integer.parseInt(data.split(regex)[1]);
 
-                Cradle cradle = new Cradle(durability);
-                tools.add(cradle);
-            }
+    //             Cradle cradle = new Cradle(durability);
+    //             tools.add(cradle);
+    //         }
 
-            System.out.println(endurance);
-            System.out.println(money);
-            System.out.println(tools);
-            fortyNiner = new FortyNiner(endurance, money, tools);
-            scanIn.close();
+    //         System.out.println(endurance);
+    //         System.out.println(money);
+    //         System.out.println(tools);
+    //         fortyNiner = new FortyNiner(endurance, money, tools);
+    //         scanIn.close();
 
-            System.out.println("Game loaded.");
-        } catch (FileNotFoundException e){
-            System.out.println("Starting new game.");
-        }
-    }
+    //         System.out.println("Game loaded.");
+    //     } catch (FileNotFoundException e){
+    //         System.out.println("Starting new game.");
+    //     }
+    // }
 
     private void gameplay(){
         switch(gp_fsm){
@@ -514,7 +506,7 @@ public class App extends Application {
                     msg = "";
                     break;
             }
-            fortyNiner.itIsSundayAgain(location);
+            game.getFortyNiner().itIsSundayAgain(location);
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -578,8 +570,8 @@ public class App extends Application {
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
-            fortyNiner.useTools();
-            fortyNiner.loseEndurance();
+            game.getFortyNiner().useTools();
+            game.getFortyNiner().loseEndurance();
             break;
         case 13:
             layout.getChildren().remove(popUpImage);
@@ -589,8 +581,8 @@ public class App extends Application {
             week++;
             msg = "New week!\n";
             msg += "Press K to navigate";
-            fortyNiner.useTools();
-            fortyNiner.loseEndurance();
+            game.getFortyNiner().useTools();
+            game.getFortyNiner().loseEndurance();
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -608,7 +600,8 @@ public class App extends Application {
     }
 
     private void makeFortyNiner(){
-        fortyNiner = new FortyNiner();
+        week = game.loadGame();
+        week = game.survive();
     }
 
     private void foodComes(){
@@ -630,7 +623,7 @@ public class App extends Application {
     }
 
     private void buyFood(){
-        foodPrice = fortyNiner.buyFood();
+        foodPrice = game.getFortyNiner().buyFood();
 
         msg = "Hi!\n";
         msg+= "Food for this week will cost you $";
@@ -717,17 +710,17 @@ public class App extends Application {
 
         int newMoney = cradlePrice * 30;
 
-        while(fortyNiner.getMoney() < newMoney) {
+        while(game.getFortyNiner().getMoney() < newMoney) {
             cradlePrice--;
             newMoney = cradlePrice * 30;
         }
 
         for(int item = 0; item < cradlePrice; item++) {
             Cradle cradle = new Cradle();
-            fortyNiner.setTools(cradle);
+            game.getFortyNiner().setTools(cradle);
         }
 
-        fortyNiner.setMoney(fortyNiner.getMoney() - newMoney);
+        game.getFortyNiner().setMoney(game.getFortyNiner().getMoney() - newMoney);
 
         cradlePrice = 0;
 
@@ -1212,10 +1205,10 @@ public class App extends Application {
 
     private void menuDisplay(){
         String msgs = "Week: " + week + "\n";
-        msgs += "Stamina: " + fortyNiner.getEndurance() + "%\n";
-        msgs += "Sluice health: " + fortyNiner.getTools().get(1).getDurability() + "%\n";
-        msgs += "No. of cradles: " + (fortyNiner.getTools().size() - 2) + "\n";
-        msgs += "Money: $" + fortyNiner.getMoney() + "\n";
+        msgs += "Stamina: " + game.getFortyNiner().getEndurance() + "%\n";
+        msgs += "Sluice health: " + game.getFortyNiner().getTools().get(1).getDurability() + "%\n";
+        msgs += "No. of cradles: " + (game.getFortyNiner().getTools().size() - 2) + "\n";
+        msgs += "Money: $" + game.getFortyNiner().getMoney() + "\n";
         textMenu.setText(msgs);
     }
 
