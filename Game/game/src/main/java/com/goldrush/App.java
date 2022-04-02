@@ -135,12 +135,15 @@ public class App extends Application {
     private FortyNiner fortyNiner;
     private int week = 1;
     private int foodPrice = 0;
+    private int cradlePrice = 0;
     private boolean cmpltAnim = false;
     private boolean cmpltAnimB = false;
     private boolean cmpltAnimC = false;
 
     private String location = "";
-    
+
+    private String msg = "";
+
     public static void main(String[] args) {
         launch();
     }
@@ -165,11 +168,11 @@ public class App extends Application {
 
         sellerFoodImage.setFitHeight(imgConfig.getInitialHeight("sellerFood"));
         sellerFoodImage.setFitWidth(imgConfig.getInitialWidth("sellerFood"));
-        sellerFoodImage.relocate(-idSF.getIW(), 200);
+        sellerFoodImage.relocate(-idSF.getIW(), 0.43*imgConfig.getInitialHeight("background"));
 
         sellerCradleImage.setFitHeight(imgConfig.getInitialHeight("sellerCradle"));
         sellerCradleImage.setFitWidth(imgConfig.getInitialWidth("sellerCradle"));
-        sellerCradleImage.relocate(-idSC.getIW(), 200);
+        sellerCradleImage.relocate(-idSC.getIW(), 0.43*imgConfig.getInitialHeight("background"));
 
         /*      SET TEXT        */
         textMenu.setTextAlignment(TextAlignment.LEFT);
@@ -271,7 +274,7 @@ public class App extends Application {
                     scaler(textMenu, menuFontSize);
                     primaryStage.setFullScreen(fs);
                     scalerAIAP(sellerFoodImage, idSF, faf, pathTransitionFood, "sellerFood", animPointsSellerFood);
-                    scalerAIAP(sellerCradleImage, idSC, fac, pathTransitionCradle, "sellerCradle", animPointsSellerFood);
+                    scalerAIAP(sellerCradleImage, idSC, fac, pathTransitionCradle, "sellerCradle", animPointsSellerCradle);
                     fs = !fs;
                     break;
                 case K:
@@ -284,14 +287,14 @@ public class App extends Application {
                     }
                     else if(!fph) {
                         exitHouse();
-                        if(gp_fsm == 4 || gp_fsm == 8){ // TESTING
+                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 11){ // TESTING
                             location = "house";
                             gameplay();
                         }
                     }
                     else if(!fph) {
                         exitWork();
-                        if(gp_fsm == 4 || gp_fsm == 8){
+                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 11){
                             location = "work";
                             gameplay();
                         }
@@ -336,7 +339,6 @@ public class App extends Application {
     }
 
     private void gameplay(){
-        String msg;
         switch(gp_fsm){
         case 0:
             makeFortyNiner();
@@ -402,6 +404,19 @@ public class App extends Application {
             foodGoes();
             break;
         case 8:
+            layout.getChildren().remove(popUpImage);
+            layout.getChildren().remove(textPopUp);
+            fpm = true;
+            fp = true;
+            cradleComes();
+            break;
+        case 9:
+            buyCradles();
+            break;
+        case 10:
+            cradleGoes();
+            break;
+        case 11:
             cmpltAnimC = true;
             msg = "You worked hard this week and some tools are now destroyed.\n";
             if(cmpltAnimB) {
@@ -419,7 +434,7 @@ public class App extends Application {
             fortyNiner.useTools();
             fortyNiner.loseEndurance();
             break;
-        case 9:
+        case 12:
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
@@ -440,7 +455,7 @@ public class App extends Application {
         }
         menuDisplay();
         gp_fsm++;
-        if(gp_fsm >= 10){
+        if(gp_fsm >= 13){
             gp_fsm = 3;
         }
     }
@@ -456,14 +471,20 @@ public class App extends Application {
         fsg = true;
         cmpltAnim = false;
         sellerFoodImage.setImage(sellerFoodRight);
+
+        msg = "Food for this week will cost you $";
+        msg += foodPrice;
+        msg += ".\n";
+        msg += "Press K to navigate";
+
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
-        fsf = true;        
+        faf = false;
+        fsf = true;
     }
 
     private void buyFood(){
         foodPrice = fortyNiner.buyFood();
 
-        String msg;
         msg = "Hi!\n";
         msg+= "Food for this week will cost you $";
         msg+= foodPrice;
@@ -488,37 +509,86 @@ public class App extends Application {
         faf = true;
         fad = false;
 
+        msg = "You worked hard this week and some tools are now destroyed.\n";
+        msg += "Press K to navigate";
+
         cmpltAnimC = false;
         sellerFoodImage.setImage(sellerFoodLeft);
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
+        faf = false;
+    }
+
+    private void cradleComes(){
+        fac = true;
+        countAI = 0;
+        fad = true;
+        fsg = true;
+        cmpltAnim = false;
+        sellerCradleImage.setImage(sellerCradleRight);
+
+        msg = "No. of bought cradles is ";
+        msg += cradlePrice;
+        msg += ".\n";
+        msg += "Press K to navigate";
+
+        animAIF("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
+        fac = false;
+        fsc = true;
+    }
+
+    private void buyCradles(){
+        // cradle = fortyNiner.buyCradle();
+
+        msg = "Hi!\n";
+        msg+= "No. of bought cradles is ";
+        msg+= cradlePrice;
+        msg+= ".";
+        if(cmpltAnim) {
+            msg += "\nPress K to navigate";
+            fpm = false;
+        }
+        layout.getChildren().add(popUpImage);
+        textPopUp.setText(msg);
+        layout.getChildren().add(textPopUp);
+    }
+
+    private void cradleGoes(){
+        cmpltAnimB = false;
+        layout.getChildren().remove(popUpImage);
+        layout.getChildren().remove(textPopUp);
+        fpm = true;
+        fp = true;
+
+        fsc = false;
+        fac = true;
+        fad = false;
+
+        msg = "You worked hard this week and some tools are now destroyed.\n";
+        msg += "Press K to navigate";
+
+        cmpltAnimC = false;
+        sellerCradleImage.setImage(sellerCradleLeft);
+        animAIR("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
+        fac = false;
     }
 
     private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         int localCAI = countAI;
 
         if(!fsg) {
-            String msg;
-            msg = "Hi!\n";
-            msg+= "Food for this week will cost you $";
-            msg+= foodPrice;
-            msg+= ".\n";
-            msg += "Press K to navigate";
-
-            layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
-            layout.getChildren().add(popUpImage);
+            msg = textPopUp.getText();
+            msg += "\nPress K to navigate";
             textPopUp.setText(msg);
             layout.getChildren().add(textPopUp);
 
             fpm = false;
-            faf = false;
             return;
         }
 
         if(localCAI >= animPoints.getCount()) {
             cmpltAnim = true;
             fpm = false;
-            faf = false;
             return;
         }
 
@@ -550,12 +620,12 @@ public class App extends Application {
 
         double posX = destX-imageView.getLayoutX()+imageView.getFitWidth()/2;
         double posY = destY-imageView.getLayoutY()+imageView.getFitHeight()/2;
-        MoveTo moveToFood = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
-        LineTo lineToFood = new LineTo(posX, posY);
+        MoveTo moveTo = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
+        LineTo lineTo = new LineTo(posX, posY);
 
         Path path = new Path();
-        path.getElements().add(moveToFood);
-        path.getElements().add(lineToFood);
+        path.getElements().add(moveTo);
+        path.getElements().add(lineTo);
 
         double time = Math.sqrt(dX*dX + dY*dY) / speed;
         pathTransition.setDuration(Duration.millis(time));
@@ -577,19 +647,15 @@ public class App extends Application {
             cmpltAnimB = true;
 
             if(cmpltAnimC){
-                String msg;
-                msg = "You worked hard this week and some tools are now destroyed.\n";
-                msg += "Press K to navigate";
-                textPopUp.setText(msg);
-                layout.getChildren().remove(popUpImage);
                 layout.getChildren().remove(textPopUp);
-                layout.getChildren().add(popUpImage);
+                msg = textPopUp.getText();
+                msg += "\nPress K to navigate";
+                textPopUp.setText(msg);
                 layout.getChildren().add(textPopUp);
+
                 fpm = false;
                 fp = false;
             }
-
-            faf = false;
             return;
         }
 
@@ -621,12 +687,12 @@ public class App extends Application {
 
         double posX = destX-imageView.getLayoutX()+imageView.getFitWidth()/2;
         double posY = destY-imageView.getLayoutY()+imageView.getFitHeight()/2;
-        MoveTo moveToFood = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
-        LineTo lineToFood = new LineTo(posX, posY);
+        LineTo lineTo = new LineTo(posX, posY);
+        MoveTo moveTo = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
 
         Path path = new Path();
-        path.getElements().add(moveToFood);
-        path.getElements().add(lineToFood);
+        path.getElements().add(moveTo);
+        path.getElements().add(lineTo);
 
         double time = Math.sqrt(dX*dX + dY*dY) / speed;
         pathTransition.setDuration(Duration.millis(time));
@@ -909,6 +975,23 @@ public class App extends Application {
             return;
         }
 
+        objectX = sellerCradleImage.getLayoutX() + sellerCradleImage.getTranslateX();
+        objectY = sellerCradleImage.getLayoutY() + sellerCradleImage.getTranslateY();
+
+        if((objectX - 3*stepSize < t1 && t1 < objectX + sellerCradleImage.getFitWidth() + 3*stepSize)
+        && objectY < t2 && t2 < objectY + sellerCradleImage.getFitHeight() + 3*stepSize){
+            if(objectY + sellerCradleImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 
+            && t2 < objectY + sellerCradleImage.getFitHeight() + 0.5*playerImage.getFitHeight()
+            && t1 > objectX + sellerCradleImage.getFitWidth()
+            && fsc){
+                fsg = false;
+                fp = false;
+                fpm = true;
+                gameplay();
+            }
+            return;
+        }
+
         playerImage.relocate(newX, newY);
     }
 
@@ -960,12 +1043,12 @@ public class App extends Application {
     }
 
     private void menuDisplay(){
-        String msg = "Week: " + week + "\n";
-        msg += "Stamina: " + fortyNiner.getEndurance() + "%\n";
-        msg += "Sluice health: " + fortyNiner.getTools().get(1).getDurability() + "%\n";
-        msg += "No. of cradles: " + (fortyNiner.getTools().size() - 2) + "\n";
-        msg += "Money: $" + fortyNiner.getMoney() + "\n";
-        textMenu.setText(msg);
+        String msgs = "Week: " + week + "\n";
+        msgs += "Stamina: " + fortyNiner.getEndurance() + "%\n";
+        msgs += "Sluice health: " + fortyNiner.getTools().get(1).getDurability() + "%\n";
+        msgs += "No. of cradles: " + (fortyNiner.getTools().size() - 2) + "\n";
+        msgs += "Money: $" + fortyNiner.getMoney() + "\n";
+        textMenu.setText(msgs);
     }
 
     private void imgSet(ImageView imageView, ImgPos imgPos, String name){
@@ -1012,15 +1095,15 @@ public class App extends Application {
 
         double posX = destX-aiImage.getLayoutX()+aiImage.getFitWidth()/2;
         double posY = destY-aiImage.getLayoutY()+aiImage.getFitHeight()/2;
-        MoveTo moveToFood = new MoveTo(aiImage.getTranslateX()+aiImage.getFitWidth()/2, aiImage.getTranslateY()+aiImage.getFitHeight()/2);
-        LineTo lineToFood = new LineTo(posX, posY);
+        MoveTo moveTo = new MoveTo(aiImage.getTranslateX()+aiImage.getFitWidth()/2, aiImage.getTranslateY()+aiImage.getFitHeight()/2);
+        LineTo lineTo = new LineTo(posX, posY);
 
         double dX = destX-(aiImage.getLayoutX() + aiImage.getTranslateX());
         double dY = destY-(aiImage.getLayoutY() + aiImage.getTranslateY());
 
         Path path = new Path();
-        path.getElements().add(moveToFood);
-        path.getElements().add(lineToFood);
+        path.getElements().add(moveTo);
+        path.getElements().add(lineTo);
 
         double time = Math.sqrt(dX*dX + dY*dY) / speed;
         pathTransition.setDuration(Duration.millis(time));

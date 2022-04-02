@@ -1,7 +1,6 @@
 package com.goldrush;
 
 import java.util.*;
-import java.io.*;
 
 public class FortyNiner {
     private int endurance;
