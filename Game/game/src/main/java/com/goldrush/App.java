@@ -60,8 +60,8 @@ public class App extends Application {
     private ImgPos imgPosBotFor = new ImgPos("botForest");
     private ImgPos imgPosTopFor = new ImgPos("topForest");
 
-    // private ImgPos imgPosSellerFood = new ImgPos();
-    // private ImgPos imgPosSellerCradle = new ImgPos();
+    private AnimPoints animPointsSellerFood = new AnimPoints("sellerFood");
+    private AnimPoints animPointsSellerCradle = new AnimPoints("sellerCradle");
 
     private ImgDims idBG = new ImgDims(imgConfig.getInitialHeight("background"), imgConfig.getInitialWidth("background"), imgConfig.getRFS());
     private ImgDims idMN = new ImgDims(imgConfig.getInitialHeight("menu"), imgConfig.getInitialWidth("menu"), imgConfig.getRFS());
@@ -83,8 +83,12 @@ public class App extends Application {
     private boolean fph = true; // non-popUpH flag
     private boolean fpw = true; // non-popUpW flag
     private boolean fp = true; // non-popUp flag
+    private boolean fpm = false; // non-popUpM flag
     private boolean faf = false; // seller flag
     private boolean fac = false; // seller flag
+    private boolean fad = true; // AnimPoint direction flag
+
+    private int countAI = -1;
 
     private double stepSize = 5;
     private double speed = 0.1;
@@ -122,6 +126,9 @@ public class App extends Application {
 
     private double blur = 2;
 
+    private int gp_fsm = 0;
+    private FortyNiner fortyNiner;
+    private int week = 1;
     
     public static void main(String[] args) {
         launch();
@@ -242,6 +249,8 @@ public class App extends Application {
                     scaler(popUpImage, idPU);
                     scaler(blackBandL, idBB);
                     scaler(blackBandR, idBB);
+                    scaler(animPointsSellerCradle);
+                    scaler(animPointsSellerFood);
                     stepSize = scaler(stepSize);
                     speed = scaler(speed);
                     blur = scaler(blur);
@@ -250,35 +259,22 @@ public class App extends Application {
                     menuFontSize = scaler(menuFontSize);
                     scaler(textMenu, menuFontSize);
                     primaryStage.setFullScreen(fs);
-                    scalerAI(sellerFoodImage, idSF, pathTransitionFood, faf, "sellerFood");
-                    scalerAI(sellerCradleImage, idSC, pathTransitionCradle, fac, "sellerCradle");
+                    scalerAIAP(sellerFoodImage, idSF, faf, pathTransitionFood, "sellerFood", animPointsSellerFood);
+                    scalerAIAP(sellerCradleImage, idSC, fac, pathTransitionCradle, "sellerCradle", animPointsSellerFood);
                     fs = !fs;
                     break;
                 case K:
                     if(!fps) {
                         exitSaloon();
+                        gameplay();
                     }
                     else if(!fph) {
                         exitHouse();
+                        gameplay();
                     }
-                    break;
-                case T: // test
-                    if(!faf){
-                        animAI("sellerFood", 0, 100);
-                        // layout.getChildren().remove(sellerFoodImage);
-                        faf = !faf;
+                    else if(!fpm) {
+                        gameplay();
                     }
-                    if(!fac){
-                        // animAI("sellerCradles");
-                        // faf = !fac;
-                    }
-                    break;
-                case Q: // test
-                    if(fs) animAI("sellerFood", 0, 200);
-                    else animAI("sellerFood", posMap(0, !fs, 'x'), posMap(200, !fs, 'y'));
-                    break;
-                case R: // test
-                    animAI("sellerFood", 100, 300);
                     break;
                 default:
                     break;
@@ -301,10 +297,208 @@ public class App extends Application {
         textPopUp.setEffect(new GaussianBlur(blur));
   
             
+
+        /*          START GAMEPLAY          */
+
+
+
         // GoldRush game = new GoldRush();
-        // game.loadGame();
+        // // game.loadGame();
         // game.survive();
-        menuDisplay(1, 100, 100, 0, 100);
+
+        
+
+        gameplay();
+    }
+
+    private void gameplay(){
+        String msg;
+        switch(gp_fsm){
+        case 0:
+            makeFortyNiner();
+            msg = "GOLD RUSH\n";
+            msg += "IN THIS GAME YOU WILL PLAY AS AN OL' TIMER 49ER!\n";
+            msg += "PRESS K TO NAVIGATE\n";
+            textPopUp.setText(msg);
+            layout.getChildren().add(popUpImage);
+            layout.getChildren().add(textPopUp);
+            fpm = false;
+            break;
+        case 1:
+            msg = "EVERY WEEKEND YOU CAN GO TO THE SALOON, REST AT HOME OR FIX BROKEN SLUICE.\n";
+            msg += "PRESS K TO NAVIGATE\n";
+            textPopUp.setText(msg);
+            break;
+        case 2:
+            msg = "YOU WILL ALSO HAVE TO BUY FOOD, BUT YOU MAY BUY CRADLES AS WELL.\n";
+            msg += "PRESS K TO NAVIGATE\n";
+            textPopUp.setText(msg);
+            break;
+        case 3:
+            layout.getChildren().remove(popUpImage);
+            layout.getChildren().remove(textPopUp);
+            fpm = true;
+            break;
+        case 4:
+            fortyNiner.useTools();
+            fortyNiner.loseEndurance();
+            msg = "YOU WORKED HARD THIS WEEK AND YOU DESTROYED SOME TOOLS.\n";
+            msg += "PRESS K TO NAVIGATE\n";
+            textPopUp.setText(msg);
+            layout.getChildren().add(popUpImage);
+            layout.getChildren().add(textPopUp);
+            fpm = false;
+            break;
+        case 5:
+            layout.getChildren().remove(popUpImage);
+            layout.getChildren().remove(textPopUp);
+            fpm = true;
+            break;
+        case 6:
+            foodComes();
+            break;
+        case 7:
+            foodGoes();
+            break;
+        case 10:
+            week++;
+            break;
+        default:
+            return;
+        }
+        menuDisplay();
+        gp_fsm++;
+    }
+
+    private void makeFortyNiner(){
+        fortyNiner = new FortyNiner();
+    }
+
+    private void foodComes(){
+        faf = true;
+        countAI = 0;
+        fad = true;
+        animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
+        fortyNiner.buyFood();
+        
+    }
+
+    private void foodGoes(){
+        menuDisplay();
+        faf = true;
+        fad = false;
+        countAI = animPointsSellerFood.getCount()-1;
+        animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
+    }
+
+    private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
+        if(animPoints.getCount() == countAI) {
+            countAI = -1;
+            faf = false;
+            return;
+        }
+
+        double dX = 0;
+        double dY = 0;
+
+        if(countAI % 2 == 0) {
+            dX = animPoints.getPos(countAI);
+        }
+        else{
+            dY = animPoints.getPos(countAI);
+        }
+
+        double destX = dX + (imageView.getLayoutX() + imageView.getTranslateX());
+        double destY = dY + (imageView.getLayoutY() + imageView.getTranslateY());
+
+        switch(name) {
+            case "sellerFood":
+                destXFood = destX;
+                destYFood = destY;
+                break;
+            case "sellerCradle":
+                destXCradle = destX;
+                destYCradle = destY;
+                break;
+            default:
+                return;
+            }
+
+        double posX = destX-imageView.getLayoutX()+imageView.getFitWidth()/2;
+        double posY = destY-imageView.getLayoutY()+imageView.getFitHeight()/2;
+        MoveTo moveToFood = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
+        LineTo lineToFood = new LineTo(posX, posY);
+
+        Path path = new Path();
+        path.getElements().add(moveToFood);
+        path.getElements().add(lineToFood);
+
+        double time = Math.sqrt(dX*dX + dY*dY) / speed;
+        pathTransition.setDuration(Duration.millis(time));
+        pathTransition.setNode(imageView);
+        pathTransition.setPath(path);
+
+        pathTransition.setOnFinished(event -> {
+            countAI++;
+            animAIF(name, imageView, pathTransition, animPoints);
+        });
+
+        pathTransition.play();
+    }
+
+
+    private void animAIR(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
+        if(countAI < 0) {
+            faf = false;
+            return;
+        }
+
+        double dX = 0;
+        double dY = 0;
+
+        if(countAI % 2 == 0) {
+            dX = animPoints.getPos(countAI);
+        }
+        else{
+            dY = animPoints.getPos(countAI);
+        }
+
+        double destX = dX + (imageView.getLayoutX() + imageView.getTranslateX());
+        double destY = dY + (imageView.getLayoutY() + imageView.getTranslateY());
+
+        switch(name) {
+            case "sellerFood":
+                destXFood = destX;
+                destYFood = destY;
+                break;
+            case "sellerCradle":
+                destXCradle = destX;
+                destYCradle = destY;
+                break;
+            default:
+                return;
+            }
+
+        double posX = destX-imageView.getLayoutX()+imageView.getFitWidth()/2;
+        double posY = destY-imageView.getLayoutY()+imageView.getFitHeight()/2;
+        MoveTo moveToFood = new MoveTo(imageView.getTranslateX()+imageView.getFitWidth()/2, imageView.getTranslateY()+imageView.getFitHeight()/2);
+        LineTo lineToFood = new LineTo(posX, posY);
+
+        Path path = new Path();
+        path.getElements().add(moveToFood);
+        path.getElements().add(lineToFood);
+
+        double time = Math.sqrt(dX*dX + dY*dY) / speed;
+        pathTransition.setDuration(Duration.millis(time));
+        pathTransition.setNode(imageView);
+        pathTransition.setPath(path);
+
+        pathTransition.setOnFinished(event -> {
+            countAI--;
+            animAIR(name, imageView, pathTransition, animPoints);
+        });
+
+        pathTransition.play();
     }
 
     /*      FULLSCREEN FUNCTIONS        */
@@ -322,7 +516,7 @@ public class App extends Application {
         img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
     }
 
-    private void scalerAI(ImageView img, ImgDims id, PathTransition pathTransition, boolean moving, String name) {
+    private void scalerAI(ImageView img, ImgDims id, boolean move, PathTransition pathTransition, String name) {
 
         if(fs){
             img.setFitHeight(id.getFH());
@@ -339,7 +533,7 @@ public class App extends Application {
         img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
         img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
 
-        if(moving) {
+        if(move){
             pathTransition.stop();
 
             double destX = 0;
@@ -357,11 +551,61 @@ public class App extends Application {
             default:
                 break;
             }
-    
+
             destX = posMap(destX, fs, 'x');
             destY = posMap(destY, fs, 'y');
 
             animAI(name, destX, destY);
+        }
+    }
+
+    private void scalerAIAP(ImageView img, ImgDims id, boolean move, PathTransition pathTransition, String name, AnimPoints animPoints) {
+
+        if(fs){
+            img.setFitHeight(id.getFH());
+            img.setFitWidth(id.getFW());
+        }
+        else{
+            img.setFitHeight(id.getIH());
+            img.setFitWidth(id.getIW());
+        }
+
+        img.setLayoutX( posMapNoBSW(img.getLayoutX(), id) );
+        img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
+        
+        img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
+        img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
+
+        if(move){
+            pathTransition.stop();
+
+            double destX = 0;
+            double destY = 0;
+
+            switch(name){
+            case "sellerFood":
+                destX = destXFood;
+                destY = destYFood;
+                break;
+            case "sellerCradle":
+                destX = destXCradle;
+                destY = destYCradle;
+                break;
+            default:
+                break;
+            }
+
+            destX = posMap(destX, fs, 'x');
+            destY = posMap(destY, fs, 'y');
+
+            animAI(name, destX, destY);
+
+            if(fad) {
+                animAIF(name, img, pathTransition, animPoints);
+            }
+            else {
+                animAIR(name, img, pathTransition, animPoints);
+            }
         }
     }
 
@@ -406,6 +650,20 @@ public class App extends Application {
         text.setLineSpacing( scaler(text.getLineSpacing()) );
         text.setEffect(new GaussianBlur(blur));
     }
+
+    private void scaler(AnimPoints animPoints) {
+        if(fs){
+            for(int i = 0; i < animPoints.getCount(); i++){
+                animPoints.setPos(animPoints.getPos(i) * imgConfig.getRFS(), i);
+            }
+        }
+        else{
+            for(int i = 0; i < animPoints.getCount(); i++){
+                animPoints.setPos(animPoints.getPos(i) / imgConfig.getRFS(), i);
+            }
+        }
+    }
+
 
     private void go(char dir, ImageView[] botT, ImageView[] topT){
         double posX = playerImage.getLayoutX();
@@ -518,16 +776,17 @@ public class App extends Application {
     private void exitHouse(){
         layout.getChildren().remove(textPopUp);
         layout.getChildren().remove(popUpImage);
+        playerImage.setImage(playerLeft);
         fph = true;
         fp = true;
     }
 
-    private void menuDisplay(int we, int st, int sl, int cr, int mn){
-        String msg = "Week: " + we + "\n";
-        msg += "Stamina: " + st + "%\n";
-        msg += "Sluice health: " + sl + "%\n";
-        msg += "No. of cradles: " + cr + "\n";
-        msg += "Money: $" + mn + "\n";
+    private void menuDisplay(){
+        String msg = "Week: " + week + "\n";
+        msg += "Stamina: " + fortyNiner.getEndurance() + "%\n";
+        msg += "Sluice health: " + fortyNiner.getTools().get(1).getDurability() + "%\n";
+        msg += "No. of cradles: " + (fortyNiner.getTools().size() - 2) + "\n";
+        msg += "Money: $" + fortyNiner.getMoney() + "\n";
         textMenu.setText(msg);
     }
 
@@ -553,23 +812,26 @@ public class App extends Application {
     }
 
     private void animAI(String name, double destX, double destY){
+        ImageView aiImage;
+        PathTransition pathTransition;
+
         switch(name) {
         case "sellerFood":
-            moveAI(sellerFoodImage, destX, destY);
+            aiImage = sellerFoodImage;
+            pathTransition = pathTransitionFood;
             destXFood = destX;
             destYFood = destY;
             break;
         case "sellerCradle":
-            moveAI(sellerCradleImage, destX, destY);
+            aiImage = sellerCradleImage;
+            pathTransition = pathTransitionCradle;
             destXCradle = destX;
             destYCradle = destY;
             break;
         default:
-            break;
+            return;
         }
-    }
 
-    private void moveAI(ImageView aiImage, double destX, double destY){
         double posX = destX-aiImage.getLayoutX()+aiImage.getFitWidth()/2;
         double posY = destY-aiImage.getLayoutY()+aiImage.getFitHeight()/2;
         MoveTo moveToFood = new MoveTo(aiImage.getTranslateX()+aiImage.getFitWidth()/2, aiImage.getTranslateY()+aiImage.getFitHeight()/2);
@@ -583,10 +845,24 @@ public class App extends Application {
         path.getElements().add(lineToFood);
 
         double time = Math.sqrt(dX*dX + dY*dY) / speed;
-        pathTransitionFood.setDuration(Duration.millis(time));
-        pathTransitionFood.setNode(aiImage);
-        pathTransitionFood.setPath(path);
-        pathTransitionFood.play();
+        pathTransition.setDuration(Duration.millis(time));
+        pathTransition.setNode(aiImage);
+        pathTransition.setPath(path);
+
+        pathTransition.play();
+
+        pathTransition.setOnFinished(event -> {
+            switch(name) {
+            case "sellerFood":
+                faf = false;
+                break;
+            case "sellerCradle":
+                fac = false;
+                break;
+            default:
+                return;
+            }
+        });
     }
 
     private double posMap(double val, boolean size, char axis){
