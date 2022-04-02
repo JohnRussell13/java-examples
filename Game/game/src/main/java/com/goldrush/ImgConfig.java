@@ -22,6 +22,10 @@ public class ImgConfig {
     private double initWidthMN;
     private double initHeightPU;
     private double initWidthPU;
+    private double initHeightSF;
+    private double initWidthSF;
+    private double initHeightSC;
+    private double initWidthSC;
 
     private double ratioFS;
     private double blackStripWidth;
@@ -53,6 +57,10 @@ public class ImgConfig {
             initWidthHS = Double.parseDouble(scanIn.nextLine());
             initHeightMN = Double.parseDouble(scanIn.nextLine());
             initWidthMN = Double.parseDouble(scanIn.nextLine());
+            initHeightSF = Double.parseDouble(scanIn.nextLine());
+            initWidthSF = Double.parseDouble(scanIn.nextLine());
+            initHeightSC = Double.parseDouble(scanIn.nextLine());
+            initWidthSC = Double.parseDouble(scanIn.nextLine());
             scanIn.close();
 
             initHeightPU = 0.8*initHeightBG;
@@ -85,6 +93,10 @@ public class ImgConfig {
             return initHeightMN;
         case "popUp":
             return initHeightPU;
+        case "sellerFood":
+            return initHeightSF;
+        case "sellerCradle":
+            return initHeightSC;
         default:
             return 0;
         }
@@ -110,6 +122,10 @@ public class ImgConfig {
             return initWidthMN;
         case "popUp":
             return initWidthPU;
+        case "sellerFood":
+            return initWidthSF;
+        case "sellerCradle":
+            return initWidthSC;
         default:
             return 0;
         }

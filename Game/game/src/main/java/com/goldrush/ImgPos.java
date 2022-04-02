@@ -9,6 +9,16 @@ public class ImgPos {
 
     private int count;
 
+    // public ImgPos(){
+    //     count = 1;
+
+    //     posX = new double[count];
+    //     posY = new double[count];
+
+    //     posX[0] = -100;
+    //     posY[0] = 100;
+    // }
+
     public ImgPos(String loc){
         // GET THE NUMBER OF BRIDGES AND INIT ARRAY
         
