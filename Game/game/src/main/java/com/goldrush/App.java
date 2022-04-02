@@ -287,14 +287,14 @@ public class App extends Application {
                     }
                     else if(!fph) {
                         exitHouse();
-                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 11){ // TESTING
+                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 12){ // TESTING
                             location = "house";
                             gameplay();
                         }
                     }
                     else if(!fph) {
                         exitWork();
-                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 11){
+                        if(gp_fsm == 4 || gp_fsm == 8 || gp_fsm == 12){
                             location = "work";
                             gameplay();
                         }
@@ -404,19 +404,35 @@ public class App extends Application {
             foodGoes();
             break;
         case 8:
+            cmpltAnimC = true;
+            msg = "You ca now buy some more of those sweet cradles.\n";
+            if(cmpltAnimB) {
+                msg += "Press K to navigate";
+                fpm = false;
+                fp = false;
+            }
+            else {
+                fpm = true;
+                fp = false;
+            }
+            textPopUp.setText(msg);
+            layout.getChildren().add(popUpImage);
+            layout.getChildren().add(textPopUp);
+            break;
+        case 9:
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
             fp = true;
             cradleComes();
             break;
-        case 9:
+        case 10:
             buyCradles();
             break;
-        case 10:
+        case 11:
             cradleGoes();
             break;
-        case 11:
+        case 12:
             cmpltAnimC = true;
             msg = "You worked hard this week and some tools are now destroyed.\n";
             if(cmpltAnimB) {
@@ -434,7 +450,7 @@ public class App extends Application {
             fortyNiner.useTools();
             fortyNiner.loseEndurance();
             break;
-        case 12:
+        case 13:
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
@@ -455,7 +471,7 @@ public class App extends Application {
         }
         menuDisplay();
         gp_fsm++;
-        if(gp_fsm >= 13){
+        if(gp_fsm >= 14){
             gp_fsm = 3;
         }
     }
