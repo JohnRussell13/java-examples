@@ -105,15 +105,15 @@ public class App extends Application {
     private ImageView sellerFoodImage = new ImageView(sellerFoodRight); // initial orientation
     private ImageView sellerCradleImage = new ImageView(sellerCradleRight); // initial orientation
 
-
     private Rectangle blackBandL = new Rectangle();
     private Rectangle blackBandR = new Rectangle();
 
-
+    private double destXFood = 0;
+    private double destYFood = 0;
+    private double destXCradle = 0;
+    private double destYCradle = 0;
             
-    private Path pathFood = new Path();
     private PathTransition pathTransitionFood = new PathTransition();
-    private Path pathCradle = new Path();
     private PathTransition pathTransitionCradle = new PathTransition();
 
     
@@ -226,13 +226,13 @@ public class App extends Application {
                     scaler(menuImage, idMN);
                     scaler(popUpSImage, idPU);
                     scaler(popUpHImage, idPU);
-                    scalerAI(sellerFoodImage, idSF, pathTransitionFood, pathFood, faf, "sellerFood");
-                    scalerAI(sellerCradleImage, idSC, pathTransitionCradle, pathCradle, fac, "sellerCradle");
                     scaler(blackBandL, idBB);
                     scaler(blackBandR, idBB);
                     stepSize = scaler(stepSize);
                     speed = scaler(speed);
                     primaryStage.setFullScreen(fs);
+                    scalerAI(sellerFoodImage, idSF, pathTransitionFood, faf, "sellerFood");
+                    scalerAI(sellerCradleImage, idSC, pathTransitionCradle, fac, "sellerCradle");
                     fs = !fs;
                     break;
                 case K:
@@ -249,7 +249,7 @@ public class App extends Application {
                     break;
                 case T: // test
                     if(!faf){
-                        animAI("sellerFood", idSF, topTreeImage, 0, 100);
+                        animAI("sellerFood", 0, 100);
                         // layout.getChildren().remove(sellerFoodImage);
                         faf = !faf;
                     }
@@ -259,15 +259,11 @@ public class App extends Application {
                     }
                     break;
                 case Q: // test
-                    if(fs) animAI("sellerFood", idSF, topTreeImage, 0, 200);
-                    else animAI("sellerFood", idSF, topTreeImage, posMap(0, !fs, 'x'), posMap(200, !fs, 'y'));
+                    if(fs) animAI("sellerFood", 0, 200);
+                    else animAI("sellerFood", posMap(0, !fs, 'x'), posMap(200, !fs, 'y'));
                     break;
                 case R: // test
-                    animAI("sellerFood", idSF, topTreeImage, 100, 300);
-                    break;
-                case P: // test
-                    System.out.println(sellerFoodImage.getTranslateX() + sellerFoodImage.getLayoutX());
-                    System.out.println(sellerFoodImage.getTranslateY() + sellerFoodImage.getLayoutY());
+                    animAI("sellerFood", 100, 300);
                     break;
                 default:
                     break;
@@ -298,7 +294,7 @@ public class App extends Application {
         img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
     }
 
-    private void scalerAI(ImageView img, ImgDims id, PathTransition pathTransition, Path path, boolean fl, String name) {
+    private void scalerAI(ImageView img, ImgDims id, PathTransition pathTransition, boolean moving, String name) {
 
         if(fs){
             img.setFitHeight(id.getFH());
@@ -309,16 +305,35 @@ public class App extends Application {
             img.setFitWidth(id.getIW());
         }
 
-        if(fl) {
-            pathTransition.pause();
-            
-            img.setLayoutX( posMapNoBSW(img.getLayoutX(), id) );
-            img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
-            
-            img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
-            img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
+        img.setLayoutX( posMapNoBSW(img.getLayoutX(), id) );
+        img.setLayoutY( posMap(img.getLayoutY(), id, 'y') );
+        
+        img.setTranslateX( posMap(img.getTranslateX(), id, 'x') );
+        img.setTranslateY( posMap(img.getTranslateY(), id, 'y') );
+
+        if(moving) {
+            pathTransition.stop();
+
+            double destX = 0;
+            double destY = 0;
+
+            switch(name){
+            case "sellerFood":
+                destX = destXFood;
+                destY = destYFood;
+                break;
+            case "sellerCradle":
+                destX = destXCradle;
+                destY = destYCradle;
+                break;
+            default:
+                break;
+            }
     
-            // animAI(name, topImage, ((LineTo)path.getElements().get(1)).getX(), ((LineTo)path.getElements().get(1)).getY());
+            destX = posMap(destX, fs, 'x');
+            destY = posMap(destY, fs, 'y');
+
+            animAI(name, destX, destY);
         }
     }
 
@@ -473,20 +488,24 @@ public class App extends Application {
         }
     }
 
-    private void animAI(String name, ImgDims id, ImageView[] topImage, double destX, double destY){
+    private void animAI(String name, double destX, double destY){
         switch(name) {
         case "sellerFood":
-            moveAI(sellerFoodImage, topImage, destX, destY);
+            moveAI(sellerFoodImage, destX, destY);
+            destXFood = destX;
+            destYFood = destY;
             break;
         case "sellerCradle":
-            moveAI(sellerCradleImage, topImage, destX, destY);
+            moveAI(sellerCradleImage, destX, destY);
+            destXCradle = destX;
+            destYCradle = destY;
             break;
         default:
             break;
         }
     }
 
-    private void moveAI(ImageView aiImage, ImageView[] topImage, double destX, double destY){
+    private void moveAI(ImageView aiImage, double destX, double destY){
         double posX = destX-aiImage.getLayoutX()+aiImage.getFitWidth()/2;
         double posY = destY-aiImage.getLayoutY()+aiImage.getFitHeight()/2;
         MoveTo moveToFood = new MoveTo(aiImage.getTranslateX()+aiImage.getFitWidth()/2, aiImage.getTranslateY()+aiImage.getFitHeight()/2);
