@@ -117,12 +117,7 @@ public class GoldRush {
             System.out.println("Current number of cradles: " + (fortyNiner.getTools().size() - 2));
             System.out.println();
 
-            try {
-                fortyNiner.itIsSundayAgain();
-            } catch (IOException e) {
-                // Problem when writing to the file
-                e.printStackTrace();
-            }
+            // fortyNiner.itIsSundayAgain();
 
             fortyNiner.useTools();
 

@@ -90,6 +90,7 @@ public class App extends Application {
     private boolean fnc = false; // near seller flag
     private boolean fsf = false; // selling seller flag
     private boolean fsc = false; // selling seller flag
+    private boolean fsg = false; // selling seller flag
     private boolean fad = true; // AnimPoint direction flag
 
     private int countAI = -1;
@@ -133,6 +134,9 @@ public class App extends Application {
     private int gp_fsm = 0;
     private FortyNiner fortyNiner;
     private int week = 1;
+    private int foodPrice = 0;
+
+    private String location = "";
     
     public static void main(String[] args) {
         launch();
@@ -270,11 +274,24 @@ public class App extends Application {
                 case K:
                     if(!fps) {
                         exitSaloon();
-                        gameplay();
+                        if(gp_fsm == 4){
+                            location = "saloon";
+                            gameplay();
+                        }
                     }
                     else if(!fph) {
                         exitHouse();
-                        gameplay();
+                        if(gp_fsm == 4 || gp_fsm == 8){ // TESTING
+                            location = "house";
+                            gameplay();
+                        }
+                    }
+                    else if(!fph) {
+                        exitWork();
+                        if(gp_fsm == 4 || gp_fsm == 8){
+                            location = "work";
+                            gameplay();
+                        }
                     }
                     else if(!fpm) {
                         gameplay();
@@ -321,8 +338,8 @@ public class App extends Application {
         case 0:
             makeFortyNiner();
             msg = "GOLD RUSH\n";
-            msg += "IN THIS GAME YOU WILL PLAY AS AN OL' TIMER 49ER!\n";
-            msg += "PRESS K TO NAVIGATE\n";
+            msg += "In this game, you are an ol' timer - 49er!\n";
+            msg += "Press K to navigate\n";
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -330,13 +347,13 @@ public class App extends Application {
             fp = false;
             break;
         case 1:
-            msg = "EVERY WEEKEND YOU CAN GO TO THE SALOON, REST AT HOME OR FIX BROKEN SLUICE.\n";
-            msg += "PRESS K TO NAVIGATE\n";
+            msg = "Every weekend you can go to the saloon, rast at home or fix the broken sluice.\n";
+            msg += "Press K to navigate\n";
             textPopUp.setText(msg);
             break;
         case 2:
-            msg = "YOU WILL ALSO HAVE TO BUY FOOD, BUT YOU MAY BUY CRADLES AS WELL.\n";
-            msg += "PRESS K TO NAVIGATE\n";
+            msg = "You will also have to buy food, but you may buy cradles as well.\n";
+            msg += "Press K to navigate\n";
             textPopUp.setText(msg);
             break;
         case 3:
@@ -345,11 +362,23 @@ public class App extends Application {
             fpm = true;
             fp = true;
             break;
-        case 4:
-            fortyNiner.useTools();
-            fortyNiner.loseEndurance();
-            msg = "YOU WORKED HARD THIS WEEK AND YOU DESTROYED SOME TOOLS.\n";
-            msg += "PRESS K TO NAVIGATE\n";
+        case 4:       
+            switch(location) {
+                case "house":
+                    msg = "Even God rested on Sunday!";
+                    break;
+                case "work":
+                    msg = "Work is priority number one!";
+                    break;
+                case "saloon":
+                    msg = "Enjoy your night's out!\n";
+                    msg += "Have one for me!";
+                    break;
+                default:
+                    msg = "";
+                    break;
+            }
+            fortyNiner.itIsSundayAgain(location);
             textPopUp.setText(msg);
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
@@ -361,21 +390,30 @@ public class App extends Application {
             layout.getChildren().remove(textPopUp);
             fpm = true;
             fp = true;
-            break;
-        case 6:
             foodComes();
             break;
-        case 7:
+        case 6:
             buyFood();
             break;
+        case 7:
+            foodGoes();
+            break;
         case 8:
+            msg = "You worked hard this week and some tools are now destroyed.\n";
+            msg += "Press K to navigate\n";
+            fortyNiner.useTools();
+            fortyNiner.loseEndurance();
+            textPopUp.setText(msg);
+            layout.getChildren().add(popUpImage);
+            layout.getChildren().add(textPopUp);
+            fpm = false;
+            fp = false;
+            break;
+        case 9:
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
             fp = true;
-            foodGoes();
-            break;
-        case 10:
             week++;
             break;
         default:
@@ -393,35 +431,58 @@ public class App extends Application {
         faf = true;
         countAI = 0;
         fad = true;
+        fsg = true;
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
         fsf = true;        
     }
 
     private void buyFood(){
+        foodPrice = fortyNiner.buyFood();
+
         String msg;
         msg = "Hi!\n";
         msg+= "Food for this week will cost you $";
-        msg+= fortyNiner.buyFood();
+        msg+= foodPrice;
         msg+= ".";
         layout.getChildren().add(popUpImage);
         textPopUp.setText(msg);
         layout.getChildren().add(textPopUp);
-        fpm = false;
-        fp = false;
     }
 
     private void foodGoes(){
+        layout.getChildren().remove(popUpImage);
+        layout.getChildren().remove(textPopUp);
+        fpm = true;
+        fp = true;
+
         fsf = false;
         faf = true;
         fad = false;
-        countAI = animPointsSellerFood.getCount()-1;
         sellerFoodImage.setImage(sellerFoodLeft);
+
+        // countAI = animPointsSellerFood.getCount();
+
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
     }
 
     private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
-        if(animPoints.getCount() == countAI) {
-            countAI = -1;
+        int localCAI = countAI;
+        if(localCAI >= animPoints.getCount() || !fsg) {
+
+            String msg;
+            msg = "Hi!\n";
+            msg+= "Food for this week will cost you $";
+            msg+= foodPrice;
+            msg+= ".\n";
+            msg += "Press K to navigate\n";
+
+            layout.getChildren().remove(popUpImage);
+            layout.getChildren().remove(textPopUp);
+            layout.getChildren().add(popUpImage);
+            textPopUp.setText(msg);
+            layout.getChildren().add(textPopUp);
+
+            fpm = false;
             faf = false;
             return;
         }
@@ -429,11 +490,11 @@ public class App extends Application {
         double dX = 0;
         double dY = 0;
 
-        if(countAI % 2 == 0) {
-            dX = animPoints.getPos(countAI);
+        if(localCAI % 2 == 0) {
+            dX = animPoints.getPos(localCAI);
         }
         else{
-            dY = animPoints.getPos(countAI);
+            dY = animPoints.getPos(localCAI);
         }
 
         double destX = dX + (imageView.getLayoutX() + imageView.getTranslateX());
@@ -476,6 +537,7 @@ public class App extends Application {
 
 
     private void animAIR(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
+        countAI--;
         if(countAI < 0) {
             faf = false;
             return;
@@ -522,7 +584,6 @@ public class App extends Application {
         pathTransition.setPath(path);
 
         pathTransition.setOnFinished(event -> {
-            countAI--;
             animAIR(name, imageView, pathTransition, animPoints);
         });
 
@@ -788,7 +849,11 @@ public class App extends Application {
         && objectY < t2 && t2 < objectY + sellerFoodImage.getFitHeight() + 3*stepSize){
             if(objectY + sellerFoodImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 
             && t2 < objectY + sellerFoodImage.getFitHeight() + 0.5*playerImage.getFitHeight()
-            && t1 > objectX + sellerFoodImage.getFitWidth()){
+            && t1 > objectX + sellerFoodImage.getFitWidth()
+            && fsf){
+                fsg = false;
+                fp = false;
+                fpm = true;
                 gameplay();
             }
             return;
@@ -825,6 +890,22 @@ public class App extends Application {
         layout.getChildren().remove(popUpImage);
         playerImage.setImage(playerLeft);
         fph = true;
+        fp = true;
+    }
+
+    private void enterWork(){
+        layout.getChildren().add(popUpImage);
+        textPopUp.setText("THIS WEEK MIGHT BE THE ONE!");
+        layout.getChildren().add(textPopUp);
+        fpw = false;
+        fp = false;
+    }
+
+    private void exitWork(){
+        layout.getChildren().remove(textPopUp);
+        layout.getChildren().remove(popUpImage);
+        playerImage.setImage(playerLeft);
+        fpw = true;
         fp = true;
     }
 

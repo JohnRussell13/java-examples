@@ -138,45 +138,23 @@ public class FortyNiner {
         System.out.println("Lost endurance - now at " + endurance + "%.");
     }
 
-    public void itIsSundayAgain() throws IOException {
-        boolean fl = true;
-
-        do {
-            System.out.println("What shall we do this Sunday?");
-            System.out.println("1. Nothing;");
-            System.out.println("2. Fix the sluice;");
-            System.out.println("3. Paint the town red!");
-
-            Console console = System.console();
-            try {
-                int option = Integer.parseInt(console.readLine());
-        
-                switch(option) {
-                    case 1:
-                        System.out.println("Even God rested on Sunday!");
-                        // nothing
-                        fl = false;
-                        break;
-                    case 2:
-                        System.out.println("Work is priority number one!");
-                        fixSluice();
-                        fl = false;
-                        break;
-                    case 3:
-                        System.out.println("Enjoy your night's out! Have one for me!");
-                        goToSaloon();
-                        fl = false;
-                        break;
-                    default:
-                        System.out.println("Try again...");
-                        fl = true;
-                        break;
-                }
-            } catch(NumberFormatException e) {
-                System.out.println("Try again... This time with number.");
-            }
-        } 
-        while(fl);
+    public void itIsSundayAgain(String option) {        
+        switch(option) {
+            case "house":
+                System.out.println("Even God rested on Sunday!");
+                // nothing
+                break;
+            case "work":
+                System.out.println("Work is priority number one!");
+                fixSluice();
+                break;
+            case "saloon":
+                System.out.println("Enjoy your night's out! Have one for me!");
+                goToSaloon();
+                break;
+            default:
+                break;
+        }
     }
 
     private void goToSaloon() {
