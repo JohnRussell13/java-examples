@@ -544,8 +544,6 @@ public class App extends Application {
         msg += "Press K to navigate";
 
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
-        faf = false;
-        fsf = true;
     }
 
     private void buyFood(){
@@ -581,7 +579,6 @@ public class App extends Application {
         cmpltAnimC = false;
         sellerFoodImage.setImage(sellerFoodLeft);
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
-        faf = false;
     }
 
     private void cradleComes(){
@@ -601,8 +598,6 @@ public class App extends Application {
         fbc = true;
 
         animAIF("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
-        fac = false;
-        fsc = true;
     }
 
     private void buyCradles(){
@@ -656,11 +651,25 @@ public class App extends Application {
         cmpltAnimC = false;
         sellerCradleImage.setImage(sellerCradleLeft);
         animAIR("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
-        fac = false;
     }
 
     private void animAIF(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         int localCAI = countAI;
+
+        if(!fsg || localCAI >= animPoints.getCount()){
+            switch(name){
+            case "sellerFood":
+                faf = false;
+                fsf = true;
+            break;
+            case "sellerCradle":
+                fac = false;
+                fsc = true;
+            break;
+            default:
+                break;
+            }
+        }
 
         if(!fsg) {
             layout.getChildren().remove(textPopUp);
@@ -730,6 +739,7 @@ public class App extends Application {
 
     private void animAIR(String name, ImageView imageView, PathTransition pathTransition, AnimPoints animPoints){
         countAI--;
+
         if(countAI < 0) {
             cmpltAnimB = true;
 
@@ -743,6 +753,17 @@ public class App extends Application {
                 fpm = false;
                 fp = false;
             }
+
+            switch(name){
+                case "sellerFood":
+                    faf = false;
+                break;
+                case "sellerCradle":
+                    fac = false;
+                break;
+                default:
+                    break;
+                }
             return;
         }
 
