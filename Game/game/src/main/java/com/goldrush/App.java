@@ -86,6 +86,10 @@ public class App extends Application {
     private boolean fpm = false; // non-popUpM flag
     private boolean faf = false; // seller flag
     private boolean fac = false; // seller flag
+    private boolean fnf = false; // near seller flag
+    private boolean fnc = false; // near seller flag
+    private boolean fsf = false; // selling seller flag
+    private boolean fsc = false; // selling seller flag
     private boolean fad = true; // AnimPoint direction flag
 
     private int countAI = -1;
@@ -323,6 +327,7 @@ public class App extends Application {
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
             fpm = false;
+            fp = false;
             break;
         case 1:
             msg = "EVERY WEEKEND YOU CAN GO TO THE SALOON, REST AT HOME OR FIX BROKEN SLUICE.\n";
@@ -338,6 +343,7 @@ public class App extends Application {
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
+            fp = true;
             break;
         case 4:
             fortyNiner.useTools();
@@ -348,16 +354,25 @@ public class App extends Application {
             layout.getChildren().add(popUpImage);
             layout.getChildren().add(textPopUp);
             fpm = false;
+            fp = false;
             break;
         case 5:
             layout.getChildren().remove(popUpImage);
             layout.getChildren().remove(textPopUp);
             fpm = true;
+            fp = true;
             break;
         case 6:
             foodComes();
             break;
         case 7:
+            buyFood();
+            break;
+        case 8:
+            layout.getChildren().remove(popUpImage);
+            layout.getChildren().remove(textPopUp);
+            fpm = true;
+            fp = true;
             foodGoes();
             break;
         case 10:
@@ -379,15 +394,28 @@ public class App extends Application {
         countAI = 0;
         fad = true;
         animAIF("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
-        fortyNiner.buyFood();
-        
+        fsf = true;        
+    }
+
+    private void buyFood(){
+        String msg;
+        msg = "Hi!\n";
+        msg+= "Food for this week will cost you $";
+        msg+= fortyNiner.buyFood();
+        msg+= ".";
+        layout.getChildren().add(popUpImage);
+        textPopUp.setText(msg);
+        layout.getChildren().add(textPopUp);
+        fpm = false;
+        fp = false;
     }
 
     private void foodGoes(){
-        menuDisplay();
+        fsf = false;
         faf = true;
         fad = false;
         countAI = animPointsSellerFood.getCount()-1;
+        sellerFoodImage.setImage(sellerFoodLeft);
         animAIR("sellerFood", sellerFoodImage, pathTransitionFood, animPointsSellerFood);
     }
 
@@ -457,10 +485,10 @@ public class App extends Application {
         double dY = 0;
 
         if(countAI % 2 == 0) {
-            dX = animPoints.getPos(countAI);
+            dX = -animPoints.getPos(countAI);
         }
         else{
-            dY = animPoints.getPos(countAI);
+            dY = -animPoints.getPos(countAI);
         }
 
         double destX = dX + (imageView.getLayoutX() + imageView.getTranslateX());
@@ -721,8 +749,10 @@ public class App extends Application {
         t1 = (newX + playerImage.getFitWidth()/2); // middle of the body width
         t2 = (newY + playerImage.getFitHeight()); // legs
 
-        if(riverImage.getLayoutX() - playerImage.getFitWidth()/2 < t1 && t1 < riverImage.getLayoutX() + riverImage.getFitWidth() + playerImage.getFitWidth()/2) {
-            if( !(bridgeImage.getLayoutY() + 3*stepSize < t2 && t2 < bridgeImage.getLayoutY() + bridgeImage.getFitHeight()) ) {
+        if(riverImage.getLayoutX() - playerImage.getFitWidth()/2 < t1 
+        && t1 < riverImage.getLayoutX() + riverImage.getFitWidth() + playerImage.getFitWidth()/2) {
+            if( !(bridgeImage.getLayoutY() + 3*stepSize < t2 
+            && t2 < bridgeImage.getLayoutY() + bridgeImage.getFitHeight()) ) {
                 return;
             }
         }
@@ -731,7 +761,8 @@ public class App extends Application {
 
         if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight())
         && saloonImage.getLayoutX() < t1 && t1 < saloonImage.getLayoutX() + saloonImage.getFitWidth()){
-            if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
+            if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 
+            && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
                 enterSaloon();
             }
             return;
@@ -739,10 +770,26 @@ public class App extends Application {
 
         /*      HOME HITS       */
 
-        if((houseImage.getLayoutX() - 3*stepSize < t1 && t1 < houseImage.getLayoutX() + houseImage.getFitWidth())
+        if((houseImage.getLayoutX() - 3*stepSize < t1 && t1 < houseImage.getLayoutX() + houseImage.getFitWidth() + 3*stepSize)
         && houseImage.getLayoutY() < t2 && t2 < houseImage.getLayoutY() + houseImage.getFitHeight() + 3*stepSize){
-            if(houseImage.getLayoutY() + houseImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 && t2 < houseImage.getLayoutY() + houseImage.getFitHeight()){
+            if(houseImage.getLayoutY() + houseImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 
+            && t2 < houseImage.getLayoutY() + houseImage.getFitHeight()){
                 enterHouse();
+            }
+            return;
+        }
+
+        /*      SELLER HITS     */
+
+        double objectX = sellerFoodImage.getLayoutX() + sellerFoodImage.getTranslateX();
+        double objectY = sellerFoodImage.getLayoutY() + sellerFoodImage.getTranslateY();
+
+        if((objectX - 3*stepSize < t1 && t1 < objectX + sellerFoodImage.getFitWidth() + 3*stepSize)
+        && objectY < t2 && t2 < objectY + sellerFoodImage.getFitHeight() + 3*stepSize){
+            if(objectY + sellerFoodImage.getFitHeight() - 0.5*playerImage.getFitHeight() < t2 
+            && t2 < objectY + sellerFoodImage.getFitHeight() + 0.5*playerImage.getFitHeight()
+            && t1 > objectX + sellerFoodImage.getFitWidth()){
+                gameplay();
             }
             return;
         }

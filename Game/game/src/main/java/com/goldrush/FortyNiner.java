@@ -114,7 +114,7 @@ public class FortyNiner {
         System.out.println("Current Seated Liberty stack: $" + money + ".");
     }
 
-    public void buyFood() {
+    public int buyFood() {
         int newMoney = rnd.nextInt(50 - 30 + 1) + 30;
         money -= newMoney;
 
@@ -127,6 +127,8 @@ public class FortyNiner {
         else{
             System.out.println("Bought food, spent $" + newMoney + " of ye old chips!");
         }
+
+        return newMoney;
     }
 
     public void loseEndurance() {
