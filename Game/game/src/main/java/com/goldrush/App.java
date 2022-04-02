@@ -28,6 +28,8 @@ public class App extends Application {
 
     private Image playerLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerLeft.png");
     private Image playerRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerRight.png");
+    private Image playerUp = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerUp.png");
+    private Image playerDown = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerDown.png");
 
     private Image sellerCradleLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerCradleLeft.png");
     private Image sellerCradleRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerCradleRight.png");
@@ -243,9 +245,11 @@ public class App extends Application {
             public void handle(KeyEvent event) {
                 switch(event.getCode()){
                 case W:
+                    playerImage.setImage(playerUp);
                     if(fp) go('W', botTreeImage, topTreeImage);
                     break;
                 case S:
+                    playerImage.setImage(playerDown);
                     if(fp) go('S', botTreeImage, topTreeImage);
                     break;
                 case A:
@@ -1078,6 +1082,7 @@ public class App extends Application {
     private void exitSaloon(){
         layout.getChildren().remove(textPopUp);
         layout.getChildren().remove(popUpImage);
+        playerImage.setImage(playerDown); // turn down when exiting house
         fps = true;
         fp = true;
     }
@@ -1093,7 +1098,7 @@ public class App extends Application {
     private void exitHouse(){
         layout.getChildren().remove(textPopUp);
         layout.getChildren().remove(popUpImage);
-        playerImage.setImage(playerLeft);
+        playerImage.setImage(playerLeft); // turn left when exiting house
         fph = true;
         fp = true;
     }
@@ -1109,7 +1114,6 @@ public class App extends Application {
     private void exitWork(){
         layout.getChildren().remove(textPopUp);
         layout.getChildren().remove(popUpImage);
-        playerImage.setImage(playerLeft);
         fpw = true;
         fp = true;
     }
