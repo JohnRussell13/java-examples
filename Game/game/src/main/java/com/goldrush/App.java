@@ -1,5 +1,14 @@
 package com.goldrush;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -144,6 +153,8 @@ public class App extends Application {
     private String location = "";
 
     private String msg = "";
+
+    private File savedGame = new File("GoldRushSaved.txt");
 
     public static void main(String[] args) {
         launch();
@@ -332,6 +343,9 @@ public class App extends Application {
                         gameplay();
                     }
                     break;
+                case Q:
+                    saveGame(week);
+                    break;
                 default:
                     break;
                 }
@@ -358,13 +372,101 @@ public class App extends Application {
 
 
 
-        // GoldRush game = new GoldRush();
-        // // game.loadGame();
-        // game.survive();
-
         
+        loadGame();
+        
+        if(fortyNiner == null) {
+            fortyNiner = new FortyNiner();
+        }
 
         gameplay();
+    }
+
+
+    public void saveGame(int week) {
+        try {
+            FileOutputStream fos = new FileOutputStream(savedGame);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+
+            bw.write("Week no. " + week);
+            bw.newLine();
+
+            bw.write("49er endurance: " + fortyNiner.getEndurance() + "%");
+            bw.newLine();
+
+            bw.write("49er money: $" + fortyNiner.getMoney());
+            bw.newLine();
+
+            ArrayList<Tool> tools = fortyNiner.getTools();
+            Tool sluice = (Tool) tools.get(1);
+
+            bw.write("Sluice durability: " + sluice.getDurability() + "%");
+            bw.newLine();
+
+            for(int i = 2; i < tools.size(); i++){
+                Tool cradle = (Tool) tools.get(i);
+
+                bw.write("Cradle durability: " + cradle.getDurability() + "%");
+                bw.newLine();
+            }
+
+            bw.close();
+
+        } catch (FileNotFoundException e){
+            // File was not found
+            e.printStackTrace();
+        } catch (IOException e) {
+            // Problem when writing to the file
+            e.printStackTrace();
+        }
+    }
+
+    public void loadGame() {
+        int endurance = 0;
+        int money = 0;
+        ArrayList<Tool> tools = new ArrayList<>();
+
+        try {
+            Scanner scanIn = new Scanner(savedGame);
+            String data;
+            int durability;
+            String regex = "[^\\d]+";
+            
+            data = scanIn.nextLine();
+            week = Integer.parseInt(data.split(regex)[1]);
+
+            data = scanIn.nextLine();
+            endurance = Integer.parseInt(data.split(regex)[1]);
+
+            data = scanIn.nextLine();
+            money = Integer.parseInt(data.split(regex)[1]);
+
+            data = scanIn.nextLine();
+            durability = Integer.parseInt(data.split(regex)[1]);
+
+            Pan pan = new Pan();
+            tools.add(pan);
+            Sluice sluice = new Sluice(durability);
+            tools.add(sluice);
+
+            while(scanIn.hasNextLine()) {
+                data = scanIn.nextLine();
+                durability = Integer.parseInt(data.split(regex)[1]);
+
+                Cradle cradle = new Cradle(durability);
+                tools.add(cradle);
+            }
+
+            System.out.println(endurance);
+            System.out.println(money);
+            System.out.println(tools);
+            fortyNiner = new FortyNiner(endurance, money, tools);
+            scanIn.close();
+
+            System.out.println("Game loaded.");
+        } catch (FileNotFoundException e){
+            System.out.println("Starting new game.");
+        }
     }
 
     private void gameplay(){
