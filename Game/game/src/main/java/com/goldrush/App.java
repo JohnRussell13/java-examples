@@ -2,18 +2,19 @@ package com.goldrush;
 
 import javafx.animation.PathTransition;
 import javafx.application.Application;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-// import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.shape.Line;
-// import javafx.scene.layout.Background;
-// import javafx.scene.layout.BackgroundFill;
-// import javafx.scene.paint.Color;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontSmoothingType;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -43,8 +44,7 @@ public class App extends Application {
     private Image saloon = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/saloon.png");
     private Image house = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/house.png");
     private Image menu = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/menu.png");
-    private Image popUpS = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUpS.png");
-    private Image popUpH = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUpH.png");
+    private Image popUp = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUp.png");
 
 
     /*      IMAGE CONFIGURATIONS        */
@@ -81,8 +81,8 @@ public class App extends Application {
     private boolean fs = true; // non-fullscreen flag
     private boolean fps = true; // non-popUpS flag
     private boolean fph = true; // non-popUpH flag
-    private boolean fpw = true; // non-popUpH flag
-    private boolean fp = true; // non-popUpH flag
+    private boolean fpw = true; // non-popUpW flag
+    private boolean fp = true; // non-popUp flag
     private boolean faf = false; // seller flag
     private boolean fac = false; // seller flag
 
@@ -99,8 +99,7 @@ public class App extends Application {
     private ImageView houseImage = new ImageView(house);
     private Pane layout = new Pane();
 
-    private ImageView popUpSImage = new ImageView(popUpS);
-    private ImageView popUpHImage = new ImageView(popUpH);
+    private ImageView popUpImage = new ImageView(popUp);
 
     private ImageView sellerFoodImage = new ImageView(sellerFoodRight); // initial orientation
     private ImageView sellerCradleImage = new ImageView(sellerCradleRight); // initial orientation
@@ -115,6 +114,13 @@ public class App extends Application {
             
     private PathTransition pathTransitionFood = new PathTransition();
     private PathTransition pathTransitionCradle = new PathTransition();
+
+    private double popUpFontSize = 30;
+    private double menuFontSize = 12;
+    Text textPopUp = new Text();
+    Text textMenu = new Text();
+
+    private double blur = 2;
 
     
     public static void main(String[] args) {
@@ -146,6 +152,15 @@ public class App extends Application {
         sellerCradleImage.setFitHeight(imgConfig.getInitialHeight("sellerCradle"));
         sellerCradleImage.setFitWidth(imgConfig.getInitialWidth("sellerCradle"));
         sellerCradleImage.relocate(-idSC.getIW(), 200);
+
+        /*      SET TEXT        */
+        textMenu.setTextAlignment(TextAlignment.LEFT);
+        textMenu.setWrappingWidth(menuImage.getFitWidth()*0.8);
+        textMenu.setX( menuImage.getLayoutX() + menuImage.getFitWidth()*0.5 - textMenu.getWrappingWidth()*0.5 );
+        textMenu.setY( menuImage.getLayoutY() + menuImage.getFitHeight()*0.2 );
+        textMenu.setLineSpacing(menuImage.getFitHeight()*0.05);
+        textMenu.setEffect(new GaussianBlur(blur));
+        // textMenu.setFont(Font.font(null, FontWeight.BOLD, menuFontSize));
 
         /*      CREATE TREES        */
 
@@ -181,7 +196,7 @@ public class App extends Application {
             layout.getChildren().add(topTreeImage[i]);
         }
         layout.getChildren().add(menuImage);
-        // layout.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        layout.getChildren().add(textMenu);
         layout.getChildren().add(blackBandL);
         layout.getChildren().add(blackBandR);
 
@@ -224,12 +239,16 @@ public class App extends Application {
                     scaler(saloonImage, idSL);
                     scaler(houseImage, idHS);
                     scaler(menuImage, idMN);
-                    scaler(popUpSImage, idPU);
-                    scaler(popUpHImage, idPU);
+                    scaler(popUpImage, idPU);
                     scaler(blackBandL, idBB);
                     scaler(blackBandR, idBB);
                     stepSize = scaler(stepSize);
                     speed = scaler(speed);
+                    blur = scaler(blur);
+                    popUpFontSize = scaler(popUpFontSize);
+                    scaler(textPopUp, popUpFontSize);
+                    menuFontSize = scaler(menuFontSize);
+                    scaler(textMenu, menuFontSize);
                     primaryStage.setFullScreen(fs);
                     scalerAI(sellerFoodImage, idSF, pathTransitionFood, faf, "sellerFood");
                     scalerAI(sellerCradleImage, idSC, pathTransitionCradle, fac, "sellerCradle");
@@ -237,14 +256,10 @@ public class App extends Application {
                     break;
                 case K:
                     if(!fps) {
-                        layout.getChildren().remove(popUpSImage);
-                        fps = true;
-                        fp = true;
+                        exitSaloon();
                     }
                     else if(!fph) {
-                        layout.getChildren().remove(popUpHImage);
-                        fph = true;
-                        fp = true;
+                        exitHouse();
                     }
                     break;
                 case T: // test
@@ -273,10 +288,23 @@ public class App extends Application {
         });
 
         /*      CREATE POP UP       */
-        imgSet(popUpSImage, backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
+        imgSet(popUpImage, backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
             backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight(), "popUp");
-        imgSet(popUpHImage, backgroundImage.getLayoutX() + 0.1*backgroundImage.getFitWidth(), 
-            backgroundImage.getLayoutY() + 0.1*backgroundImage.getFitHeight(), "popUp");        
+
+        /*      SET TEXT        */
+        textPopUp.setTextAlignment(TextAlignment.CENTER);
+        textPopUp.setWrappingWidth(popUpImage.getFitWidth()*0.8);
+        textPopUp.setX( popUpImage.getLayoutX() + popUpImage.getFitWidth()*0.5 - textPopUp.getWrappingWidth()*0.5 );
+        textPopUp.setY( popUpImage.getLayoutY() + popUpImage.getFitHeight()*0.2 );
+        textPopUp.setFont(new Font(popUpFontSize));
+        textPopUp.setLineSpacing(popUpImage.getFitHeight()*0.05);
+        textPopUp.setEffect(new GaussianBlur(blur));
+  
+            
+        // GoldRush game = new GoldRush();
+        // game.loadGame();
+        // game.survive();
+        menuDisplay(1, 100, 100, 0, 100);
     }
 
     /*      FULLSCREEN FUNCTIONS        */
@@ -370,6 +398,15 @@ public class App extends Application {
         }
     }
 
+    private void scaler(Text text, double font) {
+        text.setWrappingWidth( scaler(text.getWrappingWidth()) );
+        text.setX( posMap(text.getX(), fs, 'x') );
+        text.setY( posMap(text.getY(), fs, 'y') );
+        text.setFont(new Font(font));
+        text.setLineSpacing( scaler(text.getLineSpacing()) );
+        text.setEffect(new GaussianBlur(blur));
+    }
+
     private void go(char dir, ImageView[] botT, ImageView[] topT){
         double posX = playerImage.getLayoutX();
         double posY = playerImage.getLayoutY();
@@ -437,7 +474,7 @@ public class App extends Application {
         if((saloonImage.getLayoutY() + 3*stepSize < t2 && t2 < saloonImage.getLayoutY() + saloonImage.getFitHeight())
         && saloonImage.getLayoutX() < t1 && t1 < saloonImage.getLayoutX() + saloonImage.getFitWidth()){
             if(saloonImage.getLayoutX() + 0.3*saloonImage.getFitWidth() < t1 && t1 < saloonImage.getLayoutX() + 0.7*saloonImage.getFitWidth()){
-                drinking();
+                enterSaloon();
             }
             return;
         }
@@ -455,16 +492,43 @@ public class App extends Application {
         playerImage.relocate(newX, newY);
     }
 
-    private void drinking(){
-        layout.getChildren().add(popUpSImage);
+    private void enterSaloon(){
+        layout.getChildren().add(popUpImage);
+        textPopUp.setText("WELCOME TO THE SALOON!");
+        layout.getChildren().add(textPopUp);
         fps = false;
         fp = false;
     }
 
+    private void exitSaloon(){
+        layout.getChildren().remove(textPopUp);
+        layout.getChildren().remove(popUpImage);
+        fps = true;
+        fp = true;
+    }
+
     private void enterHouse(){
-        layout.getChildren().add(popUpHImage);
+        layout.getChildren().add(popUpImage);
+        textPopUp.setText("WELCOME HOME!");
+        layout.getChildren().add(textPopUp);
         fph = false;
         fp = false;
+    }
+
+    private void exitHouse(){
+        layout.getChildren().remove(textPopUp);
+        layout.getChildren().remove(popUpImage);
+        fph = true;
+        fp = true;
+    }
+
+    private void menuDisplay(int we, int st, int sl, int cr, int mn){
+        String msg = "Week: " + we + "\n";
+        msg += "Stamina: " + st + "%\n";
+        msg += "Sluice health: " + sl + "%\n";
+        msg += "No. of cradles: " + cr + "\n";
+        msg += "Money: $" + mn + "\n";
+        textMenu.setText(msg);
     }
 
     private void imgSet(ImageView imageView, ImgPos imgPos, String name){
