@@ -92,6 +92,7 @@ public class App extends Application {
     private boolean fsc = false; // selling seller flag
     private boolean fsg = false; // selling seller flag
     private boolean fad = true; // AnimPoint direction flag
+    private boolean fbc = false; // AnimPoint direction flag
 
     private int countAI = -1;
 
@@ -248,6 +249,34 @@ public class App extends Application {
                 case D:
                     playerImage.setImage(playerRight);
                     if(fp) go('D', botTreeImage, topTreeImage);
+                    break;
+                case M:
+                    if(fbc){
+                        cradlePrice++;
+                        msg = "How many cradles do you want (M/N)?\n";
+                        msg += "No. of new cradles ";
+                        msg += cradlePrice;
+                        msg += ".";
+                        if(cmpltAnim) {
+                            msg += "\nPress K to navigate";
+                            fpm = false;
+                        }
+                        textPopUp.setText(msg);
+                    }
+                    break;
+                case N:
+                    if(fbc){
+                        if(cradlePrice > 0) cradlePrice--;
+                        msg = "How many cradles do you want (M/N)?\n";
+                        msg += "No. of new cradles ";
+                        msg += cradlePrice;
+                        msg += ".";
+                        if(cmpltAnim) {
+                            msg += "\nPress K to navigate";
+                            fpm = false;
+                        }
+                        textPopUp.setText(msg);
+                    }
                     break;
                 case F:
                 case ESCAPE:
@@ -542,10 +571,13 @@ public class App extends Application {
         cmpltAnim = false;
         sellerCradleImage.setImage(sellerCradleRight);
 
-        msg = "No. of bought cradles is ";
+        msg = "How many cradles do you want?\n";
+        msg += "No. of new cradles ";
         msg += cradlePrice;
         msg += ".\n";
         msg += "Press K to navigate";
+
+        fbc = true;
 
         animAIF("sellerCradle", sellerCradleImage, pathTransitionCradle, animPointsSellerCradle);
         fac = false;
@@ -555,10 +587,10 @@ public class App extends Application {
     private void buyCradles(){
         // cradle = fortyNiner.buyCradle();
 
-        msg = "Hi!\n";
-        msg+= "No. of bought cradles is ";
-        msg+= cradlePrice;
-        msg+= ".";
+        msg = "How many cradles do you want (M/N)?\n";
+        msg += "No. of new cradles ";
+        msg += cradlePrice;
+        msg += ".";
         if(cmpltAnim) {
             msg += "\nPress K to navigate";
             fpm = false;
@@ -578,6 +610,24 @@ public class App extends Application {
         fsc = false;
         fac = true;
         fad = false;
+
+        fbc = false;
+
+        int newMoney = cradlePrice * 30;
+
+        while(fortyNiner.getMoney() < newMoney) {
+            cradlePrice--;
+            newMoney = cradlePrice * 30;
+        }
+
+        for(int item = 0; item < cradlePrice; item++) {
+            Cradle cradle = new Cradle();
+            fortyNiner.setTools(cradle);
+        }
+
+        fortyNiner.setMoney(fortyNiner.getMoney() - newMoney);
+
+        cradlePrice = 0;
 
         msg = "You worked hard this week and some tools are now destroyed.\n";
         msg += "Press K to navigate";
