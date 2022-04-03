@@ -24,6 +24,7 @@ import javafx.scene.input.KeyEvent;
  * JavaFX App
  */
 public class App extends Application {
+    
     /*      IMAGES      */
 
     private Image playerLeft = new Image(getClass().getResource("playerLeft.png").toString(), true);
@@ -112,6 +113,8 @@ public class App extends Application {
     private ImageView saloonImage = new ImageView(saloon);
     private ImageView workImage = new ImageView(work);
     private ImageView houseImage = new ImageView(house);
+    ImageView botTreeImage[] = new ImageView[imgPosBotFor.getCount()];
+    ImageView topTreeImage[] = new ImageView[imgPosTopFor.getCount()];
     private Pane layout = new Pane();
 
     private ImageView popUpImage = new ImageView(popUp);
@@ -157,7 +160,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Gold Rush");
+        primaryStage.setTitle("Gold Rush - Forty-Niner");
 
         /*      CREATE BACKGROUND       */
         //backgroundImage.setPreserveRatio(true); // false if strech
@@ -193,9 +196,7 @@ public class App extends Application {
 
         /*      CREATE TREES        */
 
-        ImageView botTreeImage[] = new ImageView[imgPosBotFor.getCount()];
         imgSet(botTreeImage, imgPosBotFor, "tree");
-        ImageView topTreeImage[] = new ImageView[imgPosTopFor.getCount()];
         imgSet(topTreeImage, imgPosTopFor, "tree");
 
         /*      CREATE BLACK STRIPES FOR FULLSCREEN     */
@@ -246,19 +247,19 @@ public class App extends Application {
                 switch(event.getCode()){
                 case W:
                     playerImage.setImage(playerUp);
-                    if(fp) go('W', botTreeImage, topTreeImage);
+                    if(fp) go('W');
                     break;
                 case S:
                     playerImage.setImage(playerDown);
-                    if(fp) go('S', botTreeImage, topTreeImage);
+                    if(fp) go('S');
                     break;
                 case A:
                     playerImage.setImage(playerLeft);
-                    if(fp) go('A', botTreeImage, topTreeImage);
+                    if(fp) go('A');
                     break;
                 case D:
                     playerImage.setImage(playerRight);
-                    if(fp) go('D', botTreeImage, topTreeImage);
+                    if(fp) go('D');
                     break;
                 case M:
                     if(fbc){
@@ -939,7 +940,7 @@ public class App extends Application {
         }
     }
 
-    private void go(char dir, ImageView[] botT, ImageView[] topT){
+    private void go(char dir){
         double posX = playerImage.getLayoutX();
         double posY = playerImage.getLayoutY();
         double newX = posX;
@@ -967,22 +968,22 @@ public class App extends Application {
 
         /*      NO HITS WITH BOTTOM TREES       */
         
-        for(int i = 0; i < botT.length; i++){
-            t1 = ((botT[i].getLayoutX() + botT[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
-            t2 = ((botT[i].getLayoutY() + botT[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
-            if(-0.7*botT[i].getFitWidth() < t1 && t1 < 0.7*botT[i].getFitWidth() 
-            && 0 < t2 && t2 < botT[i].getFitHeight()) {
+        for(int i = 0; i < botTreeImage.length; i++){
+            t1 = ((botTreeImage[i].getLayoutX() + botTreeImage[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
+            t2 = ((botTreeImage[i].getLayoutY() + botTreeImage[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
+            if(-0.7*botTreeImage[i].getFitWidth() < t1 && t1 < 0.7*botTreeImage[i].getFitWidth() 
+            && 0 < t2 && t2 < botTreeImage[i].getFitHeight()) {
                 return;
             }
         }
 
         /*      NO HITS WITH TOP TREES      */
         
-        for(int i = 0; i < topT.length; i++){
-            t1 = ((topT[i].getLayoutX() + topT[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
-            t2 = ((topT[i].getLayoutY() + topT[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
-            if(-0.7*topT[i].getFitWidth() < t1 && t1 < 0.7*topT[i].getFitWidth() 
-            && -0.35*topT[i].getFitHeight() < t2 && t2 < 0.2*topT[i].getFitHeight()) return;
+        for(int i = 0; i < topTreeImage.length; i++){
+            t1 = ((topTreeImage[i].getLayoutX() + topTreeImage[i].getFitWidth()/2) - (newX + playerImage.getFitWidth()/2));
+            t2 = ((topTreeImage[i].getLayoutY() + topTreeImage[i].getFitHeight()) - (newY + playerImage.getFitHeight()));
+            if(-0.7*topTreeImage[i].getFitWidth() < t1 && t1 < 0.7*topTreeImage[i].getFitWidth() 
+            && -0.35*topTreeImage[i].getFitHeight() < t2 && t2 < 0.2*topTreeImage[i].getFitHeight()) return;
         }
 
         /*      NO HITS WITH BORDERS     */
