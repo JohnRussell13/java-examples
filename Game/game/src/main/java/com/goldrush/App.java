@@ -26,28 +26,26 @@ import javafx.scene.input.KeyEvent;
 public class App extends Application {
     /*      IMAGES      */
 
-    Util util = new Util();
+    private Image playerLeft = new Image(getClass().getResource("playerLeft.png").toString(), true);
+    private Image playerRight = new Image(getClass().getResource("playerRight.png").toString(), true);
+    private Image playerUp = new Image(getClass().getResource("playerUp.png").toString(), true);
+    private Image playerDown = new Image(getClass().getResource("playerDown.png").toString(), true);
 
-    private Image playerLeft = new Image(util.getImgLoc("playerLeft"));
-    private Image playerRight = new Image(util.getImgLoc("playerRight"));
-    private Image playerUp = new Image(util.getImgLoc("playerUp"));
-    private Image playerDown = new Image(util.getImgLoc("playerDown"));
+    private Image sellerCradleLeft = new Image(getClass().getResource("sellerCradleLeft.png").toString(), true);
+    private Image sellerCradleRight = new Image(getClass().getResource("sellerCradleRight.png").toString(), true);
 
-    private Image sellerCradleLeft = new Image(util.getImgLoc("sellerCradleLeft"));
-    private Image sellerCradleRight = new Image(util.getImgLoc("sellerCradleRight"));
+    private Image sellerFoodLeft = new Image(getClass().getResource("sellerFoodLeft.png").toString(), true);
+    private Image sellerFoodRight = new Image(getClass().getResource("sellerFoodRight.png").toString(), true);
 
-    private Image sellerFoodLeft = new Image(util.getImgLoc("sellerFoodLeft"));
-    private Image sellerFoodRight = new Image(util.getImgLoc("sellerFoodRight"));
-
-    private Image background = new Image(util.getImgLoc("background"));
-    private Image river = new Image(util.getImgLoc("river"));
-    private Image tree = new Image(util.getImgLoc("tree"));
-    private Image bridge = new Image(util.getImgLoc("bridge"));
-    private Image saloon = new Image(util.getImgLoc("saloon"));
-    private Image work = new Image(util.getImgLoc("work"));
-    private Image house = new Image(util.getImgLoc("house"));
-    private Image menu = new Image(util.getImgLoc("menu"));
-    private Image popUp = new Image(util.getImgLoc("popUp"));
+    private Image background = new Image(getClass().getResource("background.png").toString(), true);
+    private Image river = new Image(getClass().getResource("river.png").toString(), true);
+    private Image tree = new Image(getClass().getResource("tree.png").toString(), true);
+    private Image bridge = new Image(getClass().getResource("bridge.png").toString(), true);
+    private Image saloon = new Image(getClass().getResource("saloon.png").toString(), true);
+    private Image work = new Image(getClass().getResource("work.png").toString(), true);
+    private Image house = new Image(getClass().getResource("house.png").toString(), true);
+    private Image menu = new Image(getClass().getResource("menu.png").toString(), true);
+    private Image popUp = new Image(getClass().getResource("popUp.png").toString(), true);
 
 
     /*      IMAGE CONFIGURATIONS        */
