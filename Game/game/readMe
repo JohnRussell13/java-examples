@@ -8,6 +8,6 @@ You can now start the application using maven javafx:run plugin.
 
 If you also want to export it to an exectable file you need to do the following:
 
-1. compile the project using maven;
+1. generate .class and other resources files using maven javafx:jlink plugin;
 2. use install4j to make an instalation file;
 3. install executable file.
