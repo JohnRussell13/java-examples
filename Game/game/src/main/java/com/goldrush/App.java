@@ -26,26 +26,28 @@ import javafx.scene.input.KeyEvent;
 public class App extends Application {
     /*      IMAGES      */
 
-    private Image playerLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerLeft.png");
-    private Image playerRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerRight.png");
-    private Image playerUp = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerUp.png");
-    private Image playerDown = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/playerDown.png");
+    Util util = new Util();
 
-    private Image sellerCradleLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerCradleLeft.png");
-    private Image sellerCradleRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerCradleRight.png");
+    private Image playerLeft = new Image(util.getImgLoc("playerLeft"));
+    private Image playerRight = new Image(util.getImgLoc("playerRight"));
+    private Image playerUp = new Image(util.getImgLoc("playerUp"));
+    private Image playerDown = new Image(util.getImgLoc("playerDown"));
 
-    private Image sellerFoodLeft = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerFoodLeft.png");
-    private Image sellerFoodRight = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/sellerFoodRight.png");
+    private Image sellerCradleLeft = new Image(util.getImgLoc("sellerCradleLeft"));
+    private Image sellerCradleRight = new Image(util.getImgLoc("sellerCradleRight"));
 
-    private Image background = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/background.png");
-    private Image river = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/river.png");
-    private Image tree = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/tree.png");
-    private Image bridge = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/bridge.png");
-    private Image saloon = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/saloon.png");
-    private Image work = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/work.png");
-    private Image house = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/house.png");
-    private Image menu = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/menu.png");
-    private Image popUp = new Image("file://" + System.getProperty("user.dir") + "/src/main/resources/com/goldrush/popUp.png");
+    private Image sellerFoodLeft = new Image(util.getImgLoc("sellerFoodLeft"));
+    private Image sellerFoodRight = new Image(util.getImgLoc("sellerFoodRight"));
+
+    private Image background = new Image(util.getImgLoc("background"));
+    private Image river = new Image(util.getImgLoc("river"));
+    private Image tree = new Image(util.getImgLoc("tree"));
+    private Image bridge = new Image(util.getImgLoc("bridge"));
+    private Image saloon = new Image(util.getImgLoc("saloon"));
+    private Image work = new Image(util.getImgLoc("work"));
+    private Image house = new Image(util.getImgLoc("house"));
+    private Image menu = new Image(util.getImgLoc("menu"));
+    private Image popUp = new Image(util.getImgLoc("popUp"));
 
 
     /*      IMAGE CONFIGURATIONS        */
