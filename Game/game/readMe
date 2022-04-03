@@ -1,0 +1,13 @@
+One way to compose this project is to:
+
+1. install VSCode;
+2. install maven;
+3. enable java on VSCode.
+
+You can now start the application using maven javafx:run plugin.
+
+If you also want to export it to an exectable file you need to do the following:
+
+1. compile the project using maven;
+2. use install4j to make an instalation file;
+3. install executable file.
