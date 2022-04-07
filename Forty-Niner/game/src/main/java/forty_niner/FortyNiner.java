@@ -177,7 +177,13 @@ public class FortyNiner {
     }
 
     private void goToSaloon() {
-        money -= rnd.nextInt(200 - 50 + 1) + 50;
+        int newMoney = rnd.nextInt(200 - 50 + 1) + 50;
+        money -= newMoney;
+        if(money < 0){
+            System.out.println("Turns out you don't have enough money to get wasted! Better luck next time.");
+            money += newMoney;
+            return;
+        }
 
         endurance += rnd.nextInt(50 - 5 + 1) + 5;
         if(endurance > 100) endurance = 100;
