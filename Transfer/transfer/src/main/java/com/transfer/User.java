@@ -16,9 +16,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class User {
-    String username;
-    List<Integer> missing = new ArrayList<Integer>();
-    List<Integer> doubles = new ArrayList<Integer>();
+    private String username;
+    private List<Integer> missing = new ArrayList<Integer>();
+    private List<Integer> doubles = new ArrayList<Integer>();
+    private TransferClient client = new TransferClient();
 
     public User(String name){
         Boolean isNew = false;
@@ -89,6 +90,10 @@ public class User {
 
             appendUser();
         }
+
+        client.startConnection("127.0.0.1", 6666);
+        String response = client.sendMessage("hello server");
+        System.out.println(response);
     }
 
     private void appendUser(){
