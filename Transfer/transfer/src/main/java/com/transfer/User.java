@@ -24,7 +24,7 @@ public class User {
     public User(String name){
         Boolean isNew = false;
         try {
-            Scanner myReader = new Scanner(new File(System.getProperty("user.dir") + "/users.txt"));
+            Scanner myReader = new Scanner(new File(System.getProperty("user.dir") + "../users.txt"));
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 String[] dataArray = data.split(",");
