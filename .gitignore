@@ -1,3 +1,2 @@
 Game/game/target/*
-Transfer/transfer/tartget/*
-Transfer/server/tartget/*
+Transfer/client/tartget/*
