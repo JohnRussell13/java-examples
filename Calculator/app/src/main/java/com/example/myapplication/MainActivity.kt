@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Exception
 import kotlin.math.*
+import kotlinx.android.synthetic.main.activity_adv.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -650,7 +650,7 @@ public class App extends Application {
             if (!this.username.getText().equals("")) {
                 name = username.getText();
                 //Kreiraj novi socket (ako nije localhost, treba promeniti IP adresu)
-                this.socket = new Socket("127.0.0.1", 6001);
+                this.socket = new Socket("3.84.15.4", 6001);
                 //napravi BufferedReader i PrintWriter kako bi slao i primao poruke
                 this.br = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                 this.pw = new PrintWriter(new OutputStreamWriter(this.socket.getOutputStream()), true);
