@@ -1,2 +1,6 @@
 Game/game/target/*
 Transfer/client/tartget/*
+Transfer/server/tartget/*
+Memory/cli-client/tartget/*
+Memory/client/tartget/*
+Memory/server/tartget/*
