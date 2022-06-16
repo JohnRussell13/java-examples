@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Memory Game</string>
+    <string name="required">Required</string>
+    <string name="email">Email</string>
+    <string name="ip">IP Address</string>
+    <string name="port">Port</string>
+    <string name="username">Username</string>
+    <string name="submit">Submit</string>
+    <string name="userListTitle">List of Users</string>
+    <string name="back">Go back</string>
+    <string name="image">Image</string>
+</resources>

@@ -16,8 +16,19 @@ public class App
 
     public static void main( String[] args )
     {
-        App client = new App();        
+        App client = new App();
         client.login("Peter");
+
+        String str = "";
+        BufferedReader bufRead = new BufferedReader(new InputStreamReader(System.in));
+        while(!str.equals("stop")){
+            try{
+                str = bufRead.readLine();
+                client.pw.println(str);
+            } catch (Exception ex){
+                System.out.println(ex);
+            }
+        }
     }
 
     public BufferedReader getBr() {
